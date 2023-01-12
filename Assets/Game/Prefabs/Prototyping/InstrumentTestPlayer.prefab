@@ -16,9 +16,11 @@ GameObject:
   - component: {fileID: 1318874174}
   - component: {fileID: 2741449586634157568}
   - component: {fileID: 3038628071167623227}
+  - component: {fileID: 6940289126943109711}
+  - component: {fileID: 8303854521519227552}
   m_Layer: 0
-  m_Name: TestPlayer
-  m_TagString: Untagged
+  m_Name: InstrumentTestPlayer
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,8 +134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcad0e533d087d446a378e51fea6e734, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedTarget: 5
-  speed: 12
+  speedTarget: 12
+  speed: 18
 --- !u!114 &2741449586634157568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160,6 +162,52 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6940289126943109711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 790464385356434004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: f781720d93310ff4b85a357aecc971a8,
+    type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: In-Game Movement
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
+--- !u!114 &8303854521519227552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 790464385356434004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf9b3c0f686fe941b8b31c9f797d9c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimInput: {x: 0, y: 0, z: 0}
+  angledAimInput: {x: 0, y: 0, z: 0}
+  aimTurnInputThreshold: 0.1
 --- !u!1 &1535128547874532855
 GameObject:
   m_ObjectHideFlags: 0

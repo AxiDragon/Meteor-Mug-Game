@@ -1,36 +1,56 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+namespace Prototyping
 {
-    private Rigidbody rb;
-    private Transform cameraTransform;
-    [SerializeField] private float speedTarget = 5f;
-    public float speed = 12f;
-
-    private void Awake()
+    [RequireComponent(typeof(PlayerAimer))]
+    public class PlayerMovement : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody>();
-        cameraTransform = Camera.main.transform;
-    }
+        private Rigidbody rb;
+        private Vector3 moveInput;
+        private PlayerAimer aimer;
+        [SerializeField] private float speedTarget = 5f;
+        [SerializeField] private float speed = 12f;
+        private Transform cameraTransform;
 
-    void Update()
-    {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody>();
+            aimer = GetComponent<PlayerAimer>();
+            cameraTransform = Camera.main.transform;
+        }
 
-        Vector3 move = new Vector3(x, 0f, z);
-        move = Quaternion.AngleAxis(cameraTransform.eulerAngles.y, Vector3.up) * move;
-        
-        transform.LookAt(transform.position + Vector3.Scale(rb.velocity, new Vector3(1f, 0f, 1f)));
-        rb.AddForce(move * (GetSpeedModifier() * (speed * 60f * Time.deltaTime)));
-    }
+        void Update()
+        {
+            Vector3 move = Quaternion.AngleAxis(cameraTransform.eulerAngles.y, Vector3.up) * moveInput;
 
-    float GetSpeedModifier()
-    {
-        float horizontalVelocity = Vector3.Scale(rb.velocity, new Vector3(1f, 0f, 1f)).magnitude;
-        return Mathf.Min(3f, (speedTarget / horizontalVelocity));
+            if (aimer.aimInput.magnitude > aimer.aimTurnInputThreshold)
+            {
+                transform.LookAt(transform.position + aimer.angledAimInput);
+            }
+            else
+            {
+                Vector3 velocityDirection = Vector3.Scale(rb.velocity, new Vector3(1f, 0f, 1f));
+
+                if (velocityDirection.magnitude > .5f)
+                    transform.LookAt(transform.position + velocityDirection);
+            }
+
+            rb.AddForce(move * (GetSpeedModifier() * (speed * 60f * Time.deltaTime)));
+        }
+
+        float GetSpeedModifier()
+        {
+            float horizontalVelocity = Vector3.Scale(rb.velocity, new Vector3(1f, 0f, 1f)).magnitude;
+            return Mathf.Min(3f, (speedTarget / horizontalVelocity));
+        }
+
+        public void OnMove(InputValue value)
+        {
+            Vector2 inputValue = value.Get<Vector2>();
+            moveInput = new Vector3(inputValue.x, 0f, inputValue.y);
+        }
+
+
     }
 }

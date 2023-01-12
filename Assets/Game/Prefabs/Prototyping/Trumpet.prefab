@@ -129,8 +129,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitPower: 50
   launchModifier: 10
-  recoil: 50
-  recoilLaunchModifier: 3
+  recoil: 3
+  recoilLaunchModifier: 1
   hitRange: 3
 --- !u!1 &6443092477535005237
 GameObject:

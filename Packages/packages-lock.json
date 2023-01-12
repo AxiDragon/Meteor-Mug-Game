@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.akbiggs.unitytimer": {
+      "version": "https://github.com/akbiggs/UnityTimer.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "4554e279ae43277841948a98c97ed398a987fce3"
+    },
     "com.unity.2d.animation": {
       "version": "7.0.9",
       "depth": 0,
@@ -87,6 +94,15 @@
       "depth": 0,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.inputsystem": {
+      "version": "1.4.4",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.uielements": "1.0.0"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {

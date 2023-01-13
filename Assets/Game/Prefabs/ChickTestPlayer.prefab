@@ -195,6 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flock: []
+  colorRenderer: {fileID: 5548967323568642447}
 --- !u!114 &7499392791326834624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,10 +208,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cfdf22d604f99948904bdf6d34ef29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infiniteThrowsMode: 0
   aimTurnInputDifferenceThreshold: 0.2
-  throwingForce: 15
+  throwingForce: 50
   throwingPoint: {fileID: 7830524658930243034}
   throwingCooldown: 0.1
+  upwardThrowAngle: 10
 --- !u!114 &8303854521519227552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,7 +444,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6745481833397113797}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 1.25}
+  m_LocalPosition: {x: 0.00000005960464, y: 0.25, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -8,14 +8,12 @@ namespace Prototyping
         [HideInInspector] public List<Vector3> positions = new();
         [SerializeField] private int maxPositionCount = 1000;
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             positions.Add(transform.position);
-        
+
             if (positions.Count > maxPositionCount)
                 positions.RemoveAt(0);
         }
-
-
     }
 }

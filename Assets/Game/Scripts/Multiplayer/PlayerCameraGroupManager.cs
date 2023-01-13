@@ -1,13 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 
 public class PlayerCameraGroupManager : MonoBehaviour
 {
-    private CinemachineTargetGroup targetGroup;
     private int currentIndex = 1;
+    private CinemachineTargetGroup targetGroup;
+    [SerializeField] private Gradient playerColorGradient;
 
     private void Awake()
     {
@@ -16,20 +14,24 @@ public class PlayerCameraGroupManager : MonoBehaviour
 
     public void OnPlayerJoined()
     {
-        print("Trying");
-        
         Transform newPlayerTransform = null;
 
-        print(GameObject.FindGameObjectsWithTag("Player").Length);
-        foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
+        foreach (var player in GameObject.FindGameObjectsWithTag("Player"))
         {
-            for (int i = 0; i < targetGroup.m_Targets.Length; i++)
+            bool alreadyAccountedFor = false;
+            
+            for (var i = 0; i < targetGroup.m_Targets.Length; i++)
             {
                 if (player.transform == targetGroup.m_Targets[i].target)
-                    continue;
+                    alreadyAccountedFor = true;
             }
 
+            if (alreadyAccountedFor)
+                return;
+            
             newPlayerTransform = player.transform;
+            newPlayerTransform.GetComponent<FlockController>().FlockColor =
+                playerColorGradient.Evaluate(Random.Range(0f, 1f));
         }
 
         if (newPlayerTransform != null)

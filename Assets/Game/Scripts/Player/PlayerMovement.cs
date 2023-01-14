@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
                 transform.LookAt(transform.position + velocityDirection);
         }
 
-        rb.AddForce(move * (GetSpeedModifier() * (speed * 60f * Time.deltaTime)));
+        rb.AddForce(move * (GetSpeedModifier() * (speed * 60f * Time.deltaTime)), ForceMode.Acceleration);
     }
 
     private float GetSpeedModifier()

@@ -3,15 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PlayerScoreTracker
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Chick
   - Water
   - UI
-  - 
+  - Player
   - 
   - 
   - 

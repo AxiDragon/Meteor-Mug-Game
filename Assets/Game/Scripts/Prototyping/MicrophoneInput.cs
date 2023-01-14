@@ -7,6 +7,7 @@ namespace Prototyping
         [SerializeField] private string microphoneName;
         private AudioClip recording;
 
+#if !UNITY_WEBGL
         private void Start()
         {
             for (var index = 0; index < Microphone.devices.Length; index++)
@@ -27,5 +28,7 @@ namespace Prototyping
             AudioSource.PlayClipAtPoint(recording, transform.position);
             Invoke(nameof(PlayRecording), 1f);
         }
+    }
+#endif
     }
 }

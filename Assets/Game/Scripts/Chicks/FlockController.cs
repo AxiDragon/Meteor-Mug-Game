@@ -7,8 +7,9 @@ using UnityEngine;
 public class FlockController : MonoBehaviour
 {
     public ObservableCollection<ChickController> flock = new();
+    public event Action<int> onFlockChanged;
     [SerializeField] private Renderer colorRenderer;
-    private Color flockColor;
+    protected Color flockColor;
 
     public Color FlockColor
     {
@@ -28,15 +29,7 @@ public class FlockController : MonoBehaviour
     private void FlockOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         UpdateFlockTargetOrder();
-        UpdateFlockColor();
-    }
-
-    private void UpdateFlockColor()
-    {
-        for (int index = 0; index < flock.Count; index++)
-        {
-            flock[index].colorRenderer.material.color = flockColor;
-        }
+        onFlockChanged?.Invoke(flock.Count);
     }
 
     private void UpdateFlockTargetOrder()
@@ -55,15 +48,51 @@ public class FlockController : MonoBehaviour
             if (flock.Contains(chickController) || chickController.flockTimeout > 0f)
                 return;
 
-            flock.Add(chickController);
+            AddFlockMember(chickController);
         }
     }
 
     public ChickController RemoveFlockMember(int index)
     {
-        ChickController removedFlockMember = flock[index]; 
+        ChickController removedFlockMember = flock[index];
+        removedFlockMember.SetChickColor();
+
         flock.RemoveAt(index);
 
         return removedFlockMember;
+    }
+
+    public void AddFlockMember(ChickController newFlockMember, int index = -1)
+    {
+        if (newFlockMember.owner != null) newFlockMember.owner.RemoveFlockMember(newFlockMember);
+
+        if (index == -1)
+        {
+            flock.Add(newFlockMember);
+        }
+        else
+        {
+            flock.Insert(index, newFlockMember);
+        }
+
+        newFlockMember.SetTimeout();
+        newFlockMember.SetChickColor(flockColor);
+        newFlockMember.owner = this;
+    }
+
+    public void RemoveFlockMember(ChickController removedFlockMember)
+    {
+        removedFlockMember.SetChickColor();
+        flock.Remove(removedFlockMember);
+    }
+
+    public ChickController GetChick(int index)
+    {
+        return flock[index];
+    }
+
+    public int GetChickCount()
+    {
+        return flock.Count;
     }
 }

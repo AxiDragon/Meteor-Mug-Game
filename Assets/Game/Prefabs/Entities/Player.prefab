@@ -20,8 +20,10 @@ GameObject:
   - component: {fileID: 7499392791326834624}
   - component: {fileID: 8303854521519227552}
   - component: {fileID: 8789547219258624013}
-  m_Layer: 0
-  m_Name: ChickTestPlayer
+  - component: {fileID: 8596426958003253804}
+  - component: {fileID: 7162564885301570472}
+  m_Layer: 6
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,7 +118,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 790464385356434004}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -194,7 +196,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c155955873720cc46a10c0f8eb83dda2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flock: []
   colorRenderer: {fileID: 5548967323568642447}
 --- !u!114 &7499392791326834624
 MonoBehaviour:
@@ -208,12 +209,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cfdf22d604f99948904bdf6d34ef29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infiniteThrowsMode: 0
   aimTurnInputDifferenceThreshold: 0.2
-  throwingForce: 50
+  aimStartThreshold: 0.2
+  throwingForce: 65
   throwingPoint: {fileID: 7830524658930243034}
   throwingCooldown: 0.1
-  upwardThrowAngle: 10
+  upwardThrowAngle: 0
+  strikePower: 50
+  strikeRange: 3
+  infiniteThrowsMode: 0
+  autoAimRange: 25
+  autoAimRadius: 2
 --- !u!114 &8303854521519227552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,7 +278,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -337,6 +343,33 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &8596426958003253804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 790464385356434004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37f8824fce4aa7f46b2ecfd1903f5714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerScoreUIPrefab: {fileID: 7076524466955044097, guid: 90cbe3e9cfabdf24883d3e707a62b74f,
+    type: 3}
+  playerScoreManagerTag: PlayerScoreTracker
+--- !u!114 &7162564885301570472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 790464385356434004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d31f05551e7db4bb1974cfa066f493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1535128547874532855
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,7 +381,7 @@ GameObject:
   - component: {fileID: 5176183467577997241}
   - component: {fileID: 1652868058930154818}
   - component: {fileID: 7304238188884848451}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -429,7 +462,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7830524658930243034}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ThrowPosition
   m_TagString: Untagged
   m_Icon: {fileID: 8418204508859773708, guid: 0000000000000000d000000000000000, type: 0}
@@ -444,7 +477,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6745481833397113797}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.00000005960464, y: 0.25, z: 0.75}
+  m_LocalPosition: {x: -0, y: 0.25, z: 1.31}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

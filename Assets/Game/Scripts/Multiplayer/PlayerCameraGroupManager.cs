@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerCameraGroupManager : MonoBehaviour
 {
-    private int currentIndex = 1;
+    private int currentIndex = 0;
     private CinemachineTargetGroup targetGroup;
     [SerializeField] private Gradient playerColorGradient;
 
@@ -27,7 +27,7 @@ public class PlayerCameraGroupManager : MonoBehaviour
             }
 
             if (alreadyAccountedFor)
-                return;
+                continue;
             
             newPlayerTransform = player.transform;
             newPlayerTransform.GetComponent<FlockController>().FlockColor =

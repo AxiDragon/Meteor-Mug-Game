@@ -27,7 +27,8 @@ public class ChickThrower : MonoBehaviour
     private LineRenderer aimLine;
     private bool canThrow = true;
     private bool isAiming = false;
-    
+
+    private Animator animator;
     private FlockController flockController;
     
     private Vector2 previousAimInput;
@@ -45,7 +46,8 @@ public class ChickThrower : MonoBehaviour
             flickTimer = 0f;
 
             isAiming = value;
-
+            animator.SetBool("aiming", IsAiming);
+            
             if (isAiming)
                 StartAiming();
             else
@@ -58,6 +60,7 @@ public class ChickThrower : MonoBehaviour
         aimer = GetComponent<PlayerAimer>();
         flockController = GetComponent<FlockController>();
         aimLine = GetComponent<LineRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -98,6 +101,7 @@ public class ChickThrower : MonoBehaviour
         aimingChick.strikePower = strikePower;
         aimingChick.strikeRange = strikeRange;
         aimingChick.flockTimeout = Mathf.Infinity;
+        
     }
 
     private void StopAiming()
@@ -158,10 +162,9 @@ public class ChickThrower : MonoBehaviour
         aimingChick.currentChickState = ChickController.ChickState.Thrown;
 
         Vector3 throwingDirection = GetThrowingDirection();
-        aimingChick.rb.AddForce(throwingDirection * throwingForce, ForceMode.Impulse);
+        aimingChick.rb.AddForce(throwingDirection * throwingForce, ForceMode.VelocityChange);
 
         aimingChick.canStrike = true;
-
 
         mostRecentThrownChick = aimingChick;
 
@@ -172,6 +175,8 @@ public class ChickThrower : MonoBehaviour
                 mostRecentThrownChick.gameObject.layer = thrownChickLayerMaskID;
             }
         });
+        
+        animator.SetTrigger("throw");
     }
 
     private Vector3 GetThrowingDirection()

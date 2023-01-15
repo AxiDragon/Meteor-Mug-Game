@@ -7,7 +7,7 @@ public class FlockController : MonoBehaviour
 {
     public ObservableCollection<ChickController> flock = new();
     public event Action<int> onFlockChanged;
-    [SerializeField] private Renderer colorRenderer;
+    [SerializeField] private Renderer[] colorRenderers;
     protected Color flockColor;
 
     public Color FlockColor
@@ -16,7 +16,10 @@ public class FlockController : MonoBehaviour
         set
         {
             flockColor = value;
-            colorRenderer.material.color = flockColor;
+            for (int i = 0; i < colorRenderers.Length; i++)
+            {
+                colorRenderers[i].material.color = flockColor;
+            }
         }
     }
 

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using UnityEngine;
@@ -41,17 +40,6 @@ public class FlockController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent(out ChickController chickController))
-        {
-            if (flock.Contains(chickController) || chickController.flockTimeout > 0f)
-                return;
-
-            AddFlockMember(chickController);
-        }
-    }
-
     public ChickController RemoveFlockMember(int index)
     {
         ChickController removedFlockMember = flock[index];
@@ -62,8 +50,11 @@ public class FlockController : MonoBehaviour
         return removedFlockMember;
     }
 
-    public void AddFlockMember(ChickController newFlockMember, int index = -1)
+    public bool AddFlockMember(ChickController newFlockMember, int index = -1)
     {
+        if (flock.Contains(newFlockMember) || newFlockMember.flockTimeout > 0f)
+            return false;
+        
         if (newFlockMember.owner != null) newFlockMember.owner.RemoveFlockMember(newFlockMember);
 
         if (index == -1)
@@ -75,9 +66,12 @@ public class FlockController : MonoBehaviour
             flock.Insert(index, newFlockMember);
         }
 
+        newFlockMember.trail.enabled = false;
         newFlockMember.SetTimeout();
         newFlockMember.SetChickColor(flockColor);
         newFlockMember.owner = this;
+
+        return true;
     }
 
     public void RemoveFlockMember(ChickController removedFlockMember)
@@ -86,13 +80,28 @@ public class FlockController : MonoBehaviour
         flock.Remove(removedFlockMember);
     }
 
-    public ChickController GetChick(int index)
-    {
-        return flock[index];
-    }
-
     public int GetChickCount()
     {
         return flock.Count;
+    }
+
+    public void ScatterFlock(float force = 0f, float radius = 5f)
+    {
+        print("Player hit!");
+        
+        for (int i = 0; i < flock.Count; i++)
+        {
+            flock[i].rb.AddExplosionForce(force, transform.position, 5f);
+        }
+        
+        ReleaseFlock();
+    }
+
+    public void ReleaseFlock()
+    {
+        for (int i = 0; i < flock.Count; i++)
+        {
+            RemoveFlockMember(flock[i]);
+        }
     }
 }

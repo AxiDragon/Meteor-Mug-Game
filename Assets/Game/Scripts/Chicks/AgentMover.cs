@@ -8,7 +8,7 @@ using UnityEngine.AI;
 public class AgentMover : MonoBehaviour
 {
     [HideInInspector] public NavMeshAgent navMeshAgent;
-    [HideInInspector] public Transform target;
+    public Transform target;
 
     private void Awake()
     {

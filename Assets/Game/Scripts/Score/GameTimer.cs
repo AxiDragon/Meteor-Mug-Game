@@ -21,7 +21,7 @@ public class GameTimer : MonoBehaviour
     {
         if (timing)
         {
-            timer = Mathf.Max(0f, timer - Time.deltaTime);
+            timer = Mathf.Max(0f, timer - Time.unscaledDeltaTime);
             timerText.text = timer.ToString("F0") + "s";
             
             if (timer == 0f)

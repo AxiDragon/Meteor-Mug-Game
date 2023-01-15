@@ -18,6 +18,9 @@ public class ChickThrower : MonoBehaviour
     [Header("Other")] [SerializeField] private bool infiniteThrowsMode = false;
     [SerializeField] private float autoAimRange = 25f;
     [SerializeField] private float autoAimRadius = 2f;
+    [SerializeField] private float throwCollisionImmunityTime = .1f;
+    [SerializeField] private int thrownChickLayerMaskID;
+    [SerializeField] private List<Collider> ignoreFromAutoAim;
 
     private float flickTimer = 0f;
     private PlayerAimer aimer;
@@ -29,6 +32,7 @@ public class ChickThrower : MonoBehaviour
     
     private Vector2 previousAimInput;
     private ChickController aimingChick;
+    private ChickController mostRecentThrownChick;
 
     public bool IsAiming
     {
@@ -85,10 +89,15 @@ public class ChickThrower : MonoBehaviour
             return;
         }
 
-        aimingChick = flockController.GetChick(0);
+        aimingChick = flockController.flock[0];
         aimingChick.TogglePhysics(true);
         aimingChick.held = true;
         aimingChick.transform.parent = throwingPoint;
+        
+        aimingChick.rb.useGravity = false;
+        aimingChick.strikePower = strikePower;
+        aimingChick.strikeRange = strikeRange;
+        aimingChick.flockTimeout = Mathf.Infinity;
     }
 
     private void StopAiming()
@@ -97,8 +106,10 @@ public class ChickThrower : MonoBehaviour
             return;
 
         aimingChick.TogglePhysics(false);
+        aimingChick.rb.useGravity = true;
         aimingChick.held = false;
         aimingChick.transform.parent = null;
+        aimingChick.flockTimeout = 0f;
         aimingChick = null;
     }
 
@@ -139,6 +150,9 @@ public class ChickThrower : MonoBehaviour
 
     private void ThrowChick()
     {
+        if (aimingChick == null)
+            return;
+        
         aimingChick.agentMover.target = null;
         aimingChick.transform.parent = null;
         aimingChick.currentChickState = ChickController.ChickState.Thrown;
@@ -147,23 +161,37 @@ public class ChickThrower : MonoBehaviour
         aimingChick.rb.AddForce(throwingDirection * throwingForce, ForceMode.Impulse);
 
         aimingChick.canStrike = true;
-        aimingChick.strikePower = strikePower;
-        aimingChick.strikeRange = strikeRange;
+
+
+        mostRecentThrownChick = aimingChick;
+
+        Timer.Register(throwCollisionImmunityTime, () =>
+        {
+            if (mostRecentThrownChick.currentChickState != ChickController.ChickState.Idle)
+            {
+                mostRecentThrownChick.gameObject.layer = thrownChickLayerMaskID;
+            }
+        });
     }
 
     private Vector3 GetThrowingDirection()
     {
         Vector3 direction = Quaternion.AngleAxis(-upwardThrowAngle, transform.right) * aimer.angledAimInput;
-        List<AutoAimTarget> inAutoAimTargets = new(); 
-            
-        foreach (var c in Physics.OverlapCapsule(throwingPoint.position,
-                     throwingPoint.position + direction.normalized * autoAimRange, autoAimRadius))
-        {
-            if (c.TryGetComponent(out AutoAimTarget t))
-            {
-                if (t.gameObject == gameObject)
-                    continue;
+        List<AutoAimTarget> inAutoAimTargets = new();
 
+        Ray ray = new Ray(throwingPoint.position, throwingPoint.position + direction.normalized);
+        RaycastHit[] hits = Physics.SphereCastAll(ray, autoAimRadius, autoAimRange);
+        
+        foreach (var c in hits)
+        {
+            if (ignoreFromAutoAim.Contains(c.collider))
+                continue;
+
+            if (c.collider.gameObject == gameObject)
+                continue;
+            
+            if (c.collider.TryGetComponent(out AutoAimTarget t))
+            {
                 if (t.TryGetComponent(out ChickController cc) && flockController.flock.Contains(cc))
                     continue;
                 

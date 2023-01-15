@@ -6,7 +6,7 @@ using UnityEngine.AI;
 using UnityTimer;
 using Random = UnityEngine.Random;
 
-[RequireComponent(typeof(AgentMover), typeof(Rigidbody))]
+[RequireComponent(typeof(AgentMover), typeof(Rigidbody), typeof(Collider))]
 public class ChickController : MonoBehaviour
 {
     public enum ChickState
@@ -18,39 +18,24 @@ public class ChickController : MonoBehaviour
 
     public ChickState currentChickState = ChickState.Idle;
     public float flockTimeout;
-    
+
     [SerializeField] private float postThrowFlockTimeout = 1f;
     [SerializeField] private float maxGroundHitNormalDistance = .2f;
     [HideInInspector] public bool held;
+    private int startLayerMask;
 
     [HideInInspector] public float strikePower;
     [HideInInspector] public float strikeRange;
-    
+
     [HideInInspector] public bool canStrike;
-    
+
     public MeshRenderer colorRenderer;
     [HideInInspector] public Color defaultColor;
     [HideInInspector] public Rigidbody rb;
-    private TrailRenderer trail;
-    
-    [HideInInspector] public AgentMover agentMover;
-    [SerializeField] private Transform followTarget;
-    [HideInInspector] public FlockController owner;
+    [HideInInspector] public TrailRenderer trail;
 
-    public ChickState CurrentChickState
-    {
-        get => currentChickState;
-        set
-        {
-            currentChickState = value;
-            switch (currentChickState)
-            {
-                case ChickState.Thrown:
-                    flockTimeout = Mathf.Infinity;
-                    break;
-            }
-        }
-    }
+    [HideInInspector] public AgentMover agentMover;
+    [HideInInspector] public FlockController owner;
 
     private void Awake()
     {
@@ -58,6 +43,7 @@ public class ChickController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         defaultColor = colorRenderer.material.color;
         trail = GetComponent<TrailRenderer>();
+        startLayerMask = gameObject.layer;
     }
 
     private void Start()
@@ -80,7 +66,7 @@ public class ChickController : MonoBehaviour
         if (flockTimeout <= 0f)
         {
             flockTimeout = 0f;
-            
+
             if (!held)
                 agentMover.enabled = true;
         }
@@ -88,40 +74,45 @@ public class ChickController : MonoBehaviour
 
     public void StartFollowing(Transform target)
     {
-        CurrentChickState = ChickState.Following;
+        currentChickState = ChickState.Following;
         agentMover.target = target;
     }
 
     public void TogglePhysics(bool physicsOn)
     {
         agentMover.enabled = !physicsOn;
+        rb.constraints = physicsOn ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
+        trail.enabled = physicsOn;
     }
-    
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (CurrentChickState == ChickState.Thrown)
+        if (currentChickState == ChickState.Thrown)
         {
             if (canStrike)
             {
-                Strike();
+                rb.useGravity = true;
+                Strike(collision.gameObject);
             }
-            
+
             foreach (var item in collision.contacts)
             {
                 if (Vector3.Distance(item.normal, Vector3.up) < maxGroundHitNormalDistance)
                 {
-                    // print("Hit the ground");
-                    flockTimeout = postThrowFlockTimeout;
-                    CurrentChickState = ChickState.Idle;
+                    trail.enabled = false;
+                    flockTimeout = 0f;
+                    currentChickState = ChickState.Idle;
+                    gameObject.layer = startLayerMask;
                 }
-                
-                // Debug.DrawRay(item.point, item.normal * 100, Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f), 10f);
             }
         }
     }
 
-    private void Strike()
+    private void Strike(GameObject hitObject)
     {
+        if (hitObject.TryGetComponent(out FlockController flockController))
+            flockController.ScatterFlock(strikePower, strikeRange * 2f);
+
         foreach (var c in Physics.OverlapSphere(transform.position, strikeRange))
         {
             if (c.TryGetComponent(out Rigidbody r))
@@ -137,7 +128,7 @@ public class ChickController : MonoBehaviour
                         chickController.owner.RemoveFlockMember(chickController);
                     }
                 }
-                
+
                 r.AddExplosionForce(strikePower, transform.position, strikeRange, 1f, ForceMode.Impulse);
             }
         }
@@ -148,7 +139,7 @@ public class ChickController : MonoBehaviour
     public void SetChickColor(Color? colorValue = null)
     {
         Color color;
-        
+
         if (colorValue == null)
         {
             color = defaultColor;

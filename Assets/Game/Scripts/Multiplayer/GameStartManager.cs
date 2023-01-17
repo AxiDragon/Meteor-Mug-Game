@@ -10,6 +10,8 @@ public class GameStartManager : MonoBehaviour
     private int playerCount = 0;
     private int playersInsideOfCollider = 0;
     [SerializeField] private float countdownTime = 3f;
+    [Range(0,4)]
+    [SerializeField] private int requiredPlayersForStart = 2;
     private float timer;
     private bool timing;
     private bool gameStarted;
@@ -27,7 +29,7 @@ public class GameStartManager : MonoBehaviour
         if (timing)
         {
             timer = Mathf.Max(0f, timer - Time.unscaledDeltaTime);
-            timerText.text = timer.ToString("F0");
+            timerText.text = Mathf.Ceil(timer).ToString("F0");
 
             if (timer == 0f && !gameStarted)
             {
@@ -41,7 +43,7 @@ public class GameStartManager : MonoBehaviour
     private void UpdatePlayerReadiness()
     {
         playerCountText.text =
-            playerCount < 2 ? "Need at least 2 players!" : $"{playersInsideOfCollider} out of {playerCount}";
+            playerCount < requiredPlayersForStart ? $"Need at least {requiredPlayersForStart} players!" : $"{playersInsideOfCollider} out of {playerCount}";
 
         if (AllPlayersReady())
         {
@@ -57,7 +59,7 @@ public class GameStartManager : MonoBehaviour
 
     private bool AllPlayersReady()
     {
-        if (playerCount < 2)
+        if (playerCount < requiredPlayersForStart)
             return false;
 
         return playersInsideOfCollider == playerCount;

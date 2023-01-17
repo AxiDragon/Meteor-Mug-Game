@@ -28,7 +28,6 @@ namespace Prototyping
             AudioSource.PlayClipAtPoint(recording, transform.position);
             Invoke(nameof(PlayRecording), 1f);
         }
-    }
 #endif
     }
 }

@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: -20, y: 20, z: -20}
+  m_FollowOffset: {x: -20, y: 30, z: -20}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -156,16 +156,19 @@ MonoBehaviour:
   m_RotationMode: 0
   m_UpdateMethod: 2
   m_Targets:
+  - target: {fileID: 0}
+    weight: 1
+    radius: 6
+  - target: {fileID: 0}
+    weight: 1
+    radius: 6
+  - target: {fileID: 0}
+    weight: 1
+    radius: 6
+  - target: {fileID: 0}
+    weight: 1
+    radius: 6
   - target: {fileID: 236679209971707550}
-    weight: 1
-    radius: 6
-  - target: {fileID: 0}
-    weight: 1
-    radius: 6
-  - target: {fileID: 0}
-    weight: 1
-    radius: 6
-  - target: {fileID: 0}
     weight: 1
     radius: 6
 --- !u!1 &236679209607986548

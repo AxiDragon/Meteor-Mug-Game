@@ -17,7 +17,7 @@ public class AgentMover : MonoBehaviour
 
     private void Update()
     {
-        if (target == null)
+        if (target == null || !navMeshAgent.isOnNavMesh)
             return;
 
         navMeshAgent.SetDestination(target.position);

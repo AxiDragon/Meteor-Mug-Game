@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - PlayerScoreTracker
+  - MoveableObject
+  - TransitionScoreTracker
   layers:
   - Default
   - TransparentFX

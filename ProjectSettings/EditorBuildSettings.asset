@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Game/Scenes/PrototypeScene/FlickFlockPrototypeScene.unity
-    guid: b2431c1e30629dd4dbb617fda562db67
+    path: Assets/Game/Scenes/FFLobby.unity
+    guid: adfa6fe57bdd77a47810ebd5e5d6b9de
+  - enabled: 1
+    path: Assets/Game/Scenes/Flickflock Levels/FFFaceOff.unity
+    guid: 787392c3d2217ed41a8ae193e6023a29
+  - enabled: 1
+    path: Assets/Game/Scenes/Flickflock Levels/FFQuadrant.unity
+    guid: 5f2a3eddb1cf0de4391d906440f9d679
   m_configObjects: {}

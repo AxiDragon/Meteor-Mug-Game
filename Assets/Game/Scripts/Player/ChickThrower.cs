@@ -25,12 +25,12 @@ public class ChickThrower : MonoBehaviour
     private float flickTimer = 0f;
     private PlayerAimer aimer;
     private LineRenderer aimLine;
-    private bool canThrow = true;
+    public bool canThrow = true;
     private bool isAiming = false;
 
     private Animator animator;
     private FlockController flockController;
-    
+
     private Vector2 previousAimInput;
     private ChickController aimingChick;
     private ChickController mostRecentThrownChick;
@@ -47,7 +47,7 @@ public class ChickThrower : MonoBehaviour
 
             isAiming = value;
             animator.SetBool("aiming", IsAiming);
-            
+
             if (isAiming)
                 StartAiming();
             else
@@ -96,12 +96,11 @@ public class ChickThrower : MonoBehaviour
         aimingChick.TogglePhysics(true);
         aimingChick.held = true;
         aimingChick.transform.parent = throwingPoint;
-        
+
         aimingChick.rb.useGravity = false;
         aimingChick.strikePower = strikePower;
         aimingChick.strikeRange = strikeRange;
         aimingChick.flockTimeout = Mathf.Infinity;
-        
     }
 
     private void StopAiming()
@@ -156,11 +155,13 @@ public class ChickThrower : MonoBehaviour
     {
         if (aimingChick == null)
             return;
-        
+
         aimingChick.agentMover.target = null;
         aimingChick.transform.parent = null;
         aimingChick.currentChickState = ChickController.ChickState.Thrown;
+        aimingChick.StartChickThrowTimeOutInvoke();
 
+        aimingChick.rb.velocity = Vector3.zero;
         Vector3 throwingDirection = GetThrowingDirection();
         aimingChick.rb.AddForce(throwingDirection * throwingForce, ForceMode.VelocityChange);
 
@@ -175,7 +176,7 @@ public class ChickThrower : MonoBehaviour
                 mostRecentThrownChick.gameObject.layer = thrownChickLayerMaskID;
             }
         });
-        
+
         animator.SetTrigger("throw");
     }
 
@@ -186,7 +187,7 @@ public class ChickThrower : MonoBehaviour
 
         Ray ray = new Ray(throwingPoint.position, throwingPoint.position + direction.normalized);
         RaycastHit[] hits = Physics.SphereCastAll(ray, autoAimRadius, autoAimRange);
-        
+
         foreach (var c in hits)
         {
             if (ignoreFromAutoAim.Contains(c.collider))
@@ -194,22 +195,26 @@ public class ChickThrower : MonoBehaviour
 
             if (c.collider.gameObject == gameObject)
                 continue;
-            
+
             if (c.collider.TryGetComponent(out AutoAimTarget t))
             {
                 if (t.TryGetComponent(out ChickController cc) && flockController.flock.Contains(cc))
                     continue;
-                
+
                 inAutoAimTargets.Add(t);
             }
         }
-        
+
         if (inAutoAimTargets.Count == 0)
-            return direction;
+        {
+            Vector3 modifiedDirection = direction;
+            modifiedDirection.y = 0f;
+            return modifiedDirection.normalized;
+        }
 
         AutoAimTarget closestTarget = inAutoAimTargets[0];
         float closestDistance = Mathf.Infinity;
-        
+
         for (int i = 0; i < inAutoAimTargets.Count; i++)
         {
             float distance = Vector3.Distance(throwingPoint.position, inAutoAimTargets[i].transform.position);
@@ -219,8 +224,10 @@ public class ChickThrower : MonoBehaviour
                 closestDistance = distance;
             }
         }
-        
-        return (closestTarget.transform.position - transform.position).normalized;
+
+        Vector3 modifiedAutoAim = closestTarget.transform.position - transform.position;
+        modifiedAutoAim.y = 0f;
+        return modifiedAutoAim.normalized;
     }
 
     private void SetThrowingCooldown(float cooldown)

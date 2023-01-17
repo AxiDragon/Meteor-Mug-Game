@@ -1,7 +1,7 @@
 using System;
-using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityTimer;
 
 [RequireComponent(typeof(PlayerAimer))]
 public class PlayerMovement : MonoBehaviour
@@ -9,11 +9,24 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float speedTarget = 5f;
     [SerializeField] private float speed = 12f;
     [SerializeField] private float speedCap = 12f;
+    public bool canMove = true;
     private PlayerAimer aimer;
     private Transform cameraTransform;
     private Vector3 moveInput;
     private Rigidbody rb;
     private Animator animator;
+
+    public bool CanMove
+    {
+        get => canMove;
+        set
+        {
+            canMove = value;
+            
+            if (!canMove)
+                moveInput = Vector3.zero;
+        }
+    }
 
     private void Awake()
     {
@@ -60,7 +73,16 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
+        if (!CanMove)
+            return;
+        
         var inputValue = value.Get<Vector2>();
         moveInput = new Vector3(inputValue.x, 0f, inputValue.y);
+    }
+
+    public void Stun(float stunTime = 1f)
+    {
+        CanMove = false;
+        Timer.Register(stunTime, () => CanMove = true);
     }
 }

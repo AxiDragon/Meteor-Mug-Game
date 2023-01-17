@@ -4,17 +4,29 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using TMPro;
 using UnityEngine;
+using UnityTimer;
 
 public class RoundObjectiveManager : MonoBehaviour
 {
     private FlockController[] flockControllers = new [] { (FlockController)null };
-    private bool roundWon = false;
-    public int scoringTarget = 10;
+    private GameManager gameManager;
+    public bool roundWon = false;
+    private int scoringTarget = 10;
     [SerializeField] private TMP_Text objectiveText;
+
+    public int ScoringTarget
+    {
+        get => scoringTarget;
+        set
+        {
+            scoringTarget = value; 
+            objectiveText.text = ScoringTarget.ToString();
+        }
+    }
 
     private void Awake()
     {
-        objectiveText.text = scoringTarget.ToString();
+        gameManager = GetComponent<GameManager>();
     }
 
     public void OnPlayerJoined()
@@ -46,10 +58,12 @@ public class RoundObjectiveManager : MonoBehaviour
     {
         for (int i = 0; i < flockControllers.Length; i++)
         {
-            if (flockControllers[i].flock.Count >= scoringTarget && !roundWon)
+            if (flockControllers[i].flock.Count >= ScoringTarget && !roundWon)
             {
                 print(flockControllers[i].gameObject.name + "Has won!");
+                flockControllers[i].GetComponent<PlayerScoreManager>().roundsWon++;
                 roundWon = true;
+                Timer.Register(.0001f, () => gameManager.TransitionToNewLevel());
             }
         }
     }

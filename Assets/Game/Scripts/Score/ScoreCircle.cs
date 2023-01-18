@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class ScoreCircle : MonoBehaviour
 {
     private bool triggered = false;
-    [SerializeField] private float colorTransitionTime = 1f;
 
     [ContextMenu("Trigger Circle")]
     public void TriggerTest()
@@ -25,6 +24,6 @@ public class ScoreCircle : MonoBehaviour
 
         GetComponent<MMPositionShaker>().Play();
         GetComponent<MMScaleShaker>().Play();
-        GetComponent<Image>().DOColor(color, colorTransitionTime).SetEase(Ease.InQuint);
+        GetComponent<Image>().color = color;
     }
 }

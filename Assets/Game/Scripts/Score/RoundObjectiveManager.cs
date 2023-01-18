@@ -60,10 +60,9 @@ public class RoundObjectiveManager : MonoBehaviour
         {
             if (flockControllers[i].flock.Count >= ScoringTarget && !roundWon)
             {
-                print(flockControllers[i].gameObject.name + "Has won!");
-                flockControllers[i].GetComponent<PlayerScoreManager>().roundsWon++;
+                PlayerScoreManager winner = flockControllers[i].GetComponent<PlayerScoreManager>();
                 roundWon = true;
-                Timer.Register(.0001f, () => gameManager.TransitionToNewLevel());
+                gameManager.TransitionToNewLevel(roundWinner: winner);
             }
         }
     }

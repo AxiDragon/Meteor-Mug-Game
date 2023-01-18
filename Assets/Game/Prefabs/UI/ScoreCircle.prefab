@@ -69,7 +69,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a024740039117b540b500a93805a1af1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cef2ec142a093e941bfd1c54a21510c8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -109,9 +109,9 @@ MonoBehaviour:
   ShakeSpeed: 50
   ShakeRange: 20
   OscillationOffset: 0
-  ShakeMainDirection: {x: 0, y: 1, z: 0}
-  RandomizeDirection: 1
-  ShakeAltDirection: {x: 0, y: 1, z: 0}
+  ShakeMainDirection: {x: 1, y: 1, z: 1}
+  RandomizeDirection: 0
+  ShakeAltDirection: {x: -1, y: 1, z: -1}
   RandomizeDirectionOnPlay: 1
   AddDirectionalNoise: 1
   DirectionalNoiseStrengthMin: {x: 0.25, y: 0.25, z: 0.25}
@@ -182,9 +182,9 @@ MonoBehaviour:
   TargetRectTransform: {fileID: 5594805439929347074}
   ShakeSpeed: 50
   ShakeRange: 1
-  ShakeMainDirection: {x: 0, y: 1, z: 0}
-  RandomizeDirection: 1
-  ShakeAltDirection: {x: 0, y: 1, z: 0}
+  ShakeMainDirection: {x: 1, y: 1, z: 1}
+  RandomizeDirection: 0
+  ShakeAltDirection: {x: -1, y: -1, z: -1}
   RandomizeDirectionOnPlay: 1
   AddDirectionalNoise: 1
   DirectionalNoiseStrengthMin: {x: 0.25, y: 0.25, z: 0.25}
@@ -238,4 +238,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ca2dba2f9660304a8545ae5af103b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorTransitionTime: 1

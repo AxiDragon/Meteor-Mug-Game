@@ -133,7 +133,7 @@ ModelImporter:
       name: PlayerChicken|Throw
       takeName: PlayerChickenArmature|ArmatureAction
       internalID: 8999303086156887212
-      firstFrame: 120
+      firstFrame: 121
       lastFrame: 140
       wrapMode: 0
       orientationOffsetY: 0

@@ -23,6 +23,7 @@ public class PlayerScoreManager : MonoBehaviour
     [SerializeField] private string playerTransitionScoreManagerTag;
     [SerializeField] private Color backgroundColorMultiply;
     [SerializeField] private Color scoreCircleColorMultiply;
+    [SerializeField] private GameObject crown;
 
     [HideInInspector] public int roundsWon;
 
@@ -71,6 +72,14 @@ public class PlayerScoreManager : MonoBehaviour
     public void RoundWon()
     {
         roundsWon++;
+        
+        playerTransitionScoreUI.GetComponent<MMRotationShaker>().Play();
+        playerTransitionScoreUI.GetComponent<MMPositionShaker>().Play();
         scoreCircles[roundsWon - 1].TriggerScoring(flockController.FlockColor);
+    }
+
+    public void ToggleCrown(bool toggle = false)
+    {
+        crown.SetActive(toggle);
     }
 }

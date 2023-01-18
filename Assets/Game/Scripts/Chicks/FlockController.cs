@@ -97,8 +97,6 @@ public class FlockController : MonoBehaviour
 
     public void ScatterFlock(float force = 0f, float radius = 5f)
     {
-        print("Player hit!");
-
         for (int i = 0; i < flock.Count; i++)
         {
             flock[i].rb.AddExplosionForce(force, transform.position, 5f);

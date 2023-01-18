@@ -59,10 +59,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (rb.velocity.magnitude > speedCap)
-        {
-            rb.velocity = rb.velocity.normalized * speedCap;
-        }
+        CheckSpeedCap();
+    }
+
+    private void CheckSpeedCap()
+    {
+        Vector3 xzVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        xzVelocity = Vector3.ClampMagnitude(xzVelocity, speedCap);
+        rb.velocity = new Vector3(xzVelocity.x, rb.velocity.y, xzVelocity.z);
     }
 
     private float GetSpeedModifier()

@@ -198,7 +198,7 @@ public class ChickThrower : MonoBehaviour
 
             if (c.collider.TryGetComponent(out AutoAimTarget t))
             {
-                if (t.TryGetComponent(out ChickController cc) && flockController.flock.Contains(cc))
+                if (t.TryGetComponent(out ChickController cc) && cc.owner == flockController)
                     continue;
 
                 inAutoAimTargets.Add(t);
@@ -218,6 +218,10 @@ public class ChickThrower : MonoBehaviour
         for (int i = 0; i < inAutoAimTargets.Count; i++)
         {
             float distance = Vector3.Distance(throwingPoint.position, inAutoAimTargets[i].transform.position);
+            
+            if (distance < autoAimRadius)
+                continue;
+            
             if (distance < closestDistance)
             {
                 closestTarget = inAutoAimTargets[i];

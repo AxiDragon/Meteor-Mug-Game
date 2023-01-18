@@ -87,7 +87,7 @@ public class ChickController : MonoBehaviour
 
     public void TogglePhysics(bool physicsOn)
     {
-        agentMover.enabled = !physicsOn;
+        if (agentMover != null) agentMover.enabled = !physicsOn;
         rb.constraints = physicsOn ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
         trail.enabled = physicsOn;
     }
@@ -175,6 +175,7 @@ public class ChickController : MonoBehaviour
             }
         }
         
+        baseHit.PlayFeedbacks();
         hitEffectPlayer.PlayFeedbacks();
 
         if (!hitFlickableObject)

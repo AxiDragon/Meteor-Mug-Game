@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game/Scenes/Flickflock Levels/FFQuadrant.unity
     guid: 5f2a3eddb1cf0de4391d906440f9d679
+  - enabled: 1
+    path: Assets/Game/Scenes/Flickflock Levels/FFAvalanche.unity
+    guid: de9376ce551ebe344a78bad442b4f06c
+  - enabled: 1
+    path: Assets/Game/Scenes/Flickflock Levels/FFNest.unity
+    guid: f2efc2ea646430549801521043dc692b
   m_configObjects: {}

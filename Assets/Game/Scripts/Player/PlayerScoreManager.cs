@@ -45,10 +45,7 @@ public class PlayerScoreManager : MonoBehaviour
         
         scoreCircles = playerTransitionScoreUI.GetComponentsInChildren<ScoreCircle>();
 
-        for (int i = 0; i < scoreCircles.Length; i++)
-        {
-            scoreCircles[i].GetComponent<Image>().color = flockController.FlockColor * scoreCircleColorMultiply;
-        }
+        ResetScoreCircles();
     }
 
     private void OnEnable()
@@ -59,6 +56,14 @@ public class PlayerScoreManager : MonoBehaviour
     private void OnDisable()
     {
         flockController.onFlockChanged -= UpdateScore;
+    }
+
+    public void ResetScoreCircles()
+    {
+        for (int i = 0; i < scoreCircles.Length; i++)
+        {
+            scoreCircles[i].AssignStartingColor(flockController.FlockColor * scoreCircleColorMultiply);
+        }
     }
 
     private void UpdateScore(int score)

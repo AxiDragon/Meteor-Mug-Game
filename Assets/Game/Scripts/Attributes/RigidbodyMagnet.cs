@@ -10,9 +10,11 @@ public class RigidbodyMagnet : MonoBehaviour
     [SerializeField] private float magnetForce = 400f;
     [SerializeField] private LayerMask affectedLayers;
     private ChickController chickController;
+    private FlockController flockController;
 
     private void Awake()
     {
+        flockController = GetComponent<FlockController>();
         chickController = GetComponent<ChickController>();
     }
 
@@ -34,18 +36,18 @@ public class RigidbodyMagnet : MonoBehaviour
 
     private bool Attracted(Rigidbody hitRigidbody)
     {
-        if (chickController == null)
-            return true;
-
         if (hitRigidbody.TryGetComponent<ChickController>(out var hitChick))
         {
-            if (hitChick.owner == chickController.owner)
+            if (chickController != null && hitChick.owner == chickController.owner)
+                return false;
+
+            if (flockController != null && hitChick.owner == flockController)
                 return false;
         }
 
-        if (hitRigidbody.TryGetComponent<FlockController>(out var flockController))
+        if (hitRigidbody.TryGetComponent<FlockController>(out var hitFlockController))
         {
-            if (hitChick.owner == flockController)
+            if (chickController != null && chickController.owner == hitFlockController)
                 return false;
         }
 

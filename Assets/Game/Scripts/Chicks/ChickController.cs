@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityTimer;
@@ -18,7 +18,7 @@ public class ChickController : MonoBehaviour
     }
 
     public ChickState currentChickState = ChickState.Idle;
-    public float flockTimeout;
+    public float flockTimeout = 0.1f;
 
     [SerializeField] private float postThrowFlockTimeout = 1f;
     [SerializeField] private float maxGroundHitNormalDistance = .2f;
@@ -44,6 +44,9 @@ public class ChickController : MonoBehaviour
     [SerializeField] private MMF_Player hitObject;
     [Header("Debug")] [SerializeField] private bool showPickupability = false;
 
+    private float rbStartingMass;
+    private Vector3 startingSize;
+
     private void Awake()
     {
         agentMover = GetComponent<AgentMover>();
@@ -56,6 +59,8 @@ public class ChickController : MonoBehaviour
     private void Start()
     {
         SetChickColor();
+        rbStartingMass = rb.mass;
+        startingSize = transform.localScale;
     }
 
     private void Update()
@@ -90,6 +95,15 @@ public class ChickController : MonoBehaviour
         if (agentMover != null) agentMover.enabled = !physicsOn;
         rb.constraints = physicsOn ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
         trail.enabled = physicsOn;
+
+        if (!physicsOn)
+            ResetStats();
+    }
+
+    private void ResetStats()
+    {
+        rb.mass = rbStartingMass;
+        transform.DOScale(startingSize, .25f);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -140,10 +154,23 @@ public class ChickController : MonoBehaviour
 
         if (hitObject.TryGetComponent(out FlockController flockController) && flockController != owner)
         {
-            flockController.ScatterFlock(strikePower * 10f, strikeRange * 3f);
-            this.hitObject.GetFeedbackOfType<MMF_Flicker>().BoundRenderer = flockController.GetComponentInChildren<Renderer>();
-            hitEffectPlayer = playerHit;
-            hitFlickableObject = true;
+            bool hitShielded = false;
+            foreach (PowerUp powerUp in hitObject.GetComponents<PowerUp>())
+            {
+                if (powerUp.powerUpType == PowerUpType.Shield)
+                {
+                    
+                }
+            }
+
+            if (!hitShielded)
+            {
+                flockController.ScatterFlock(strikePower * 10f, strikeRange * 3f);
+                flockController.GetComponent<PlayerMovement>().Stun(.5f);
+                this.hitObject.GetFeedbackOfType<MMF_Flicker>().BoundRenderer = flockController.GetComponentInChildren<Renderer>();
+                hitEffectPlayer = playerHit;
+                hitFlickableObject = true;
+            }
         }
 
         if (hitObject.CompareTag("MoveableObject"))
@@ -165,7 +192,7 @@ public class ChickController : MonoBehaviour
                         continue;
                     
                     chickController.TogglePhysics(true);
-                    if (chickController.owner)
+                    if (chickController.owner && !chickController.held)
                     {
                         chickController.owner.RemoveFlockMember(chickController);
                     }

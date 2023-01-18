@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityTimer;
@@ -9,7 +10,7 @@ public class ChickThrower : MonoBehaviour
 {
     [Header("Input")] [SerializeField] private float aimTurnInputDifferenceThreshold = .5f;
     [SerializeField] private float aimStartThreshold = .2f;
-    [Header("Throwing")] [SerializeField] private float throwingForce = 5f;
+    [Header("Throwing")] public float throwingForce = 5f;
     [SerializeField] private Transform throwingPoint;
     [SerializeField] private float throwingCooldown = .1f;
     [SerializeField] private float upwardThrowAngle = 35f;
@@ -21,6 +22,9 @@ public class ChickThrower : MonoBehaviour
     [SerializeField] private float throwCollisionImmunityTime = .1f;
     [SerializeField] private int thrownChickLayerMaskID;
     [SerializeField] private List<Collider> ignoreFromAutoAim;
+
+    [HideInInspector] public float thrownChickSize = 1f;
+    [HideInInspector] public float thrownChickMass = 1f;
 
     private float flickTimer = 0f;
     private PlayerAimer aimer;
@@ -101,6 +105,9 @@ public class ChickThrower : MonoBehaviour
         aimingChick.strikePower = strikePower;
         aimingChick.strikeRange = strikeRange;
         aimingChick.flockTimeout = Mathf.Infinity;
+
+        aimingChick.rb.mass *= thrownChickMass;
+        aimingChick.transform.DOScale(aimingChick.transform.localScale * thrownChickSize, .25f);
     }
 
     private void StopAiming()

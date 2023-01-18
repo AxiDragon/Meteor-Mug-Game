@@ -11,21 +11,24 @@ using UnityTimer;
 
 public class GameManager : MonoBehaviour
 {
-    private bool firstTransition = true;
+    private bool gameStartTransition = true;
     private int currentIndex = 0;
     private int lastLevelScene = 0;
     private CinemachineTargetGroup targetGroup;
     private PlayerInputManager playerInputManager;
     private RoundObjectiveManager roundObjectiveManager;
+    [SerializeField] private ParticleSystem playerWinParticleSystemPrefab;
+    private ParticleSystem playerWinParticleSystem;
     [SerializeField] private Transform playerParent;
-    [SerializeField] private RectTransform title;//0, 700
-    [SerializeField] private RectTransform objective; 
+    [SerializeField] private RectTransform title; //0, 700
+    [SerializeField] private RectTransform objective;
     [SerializeField] private RectTransform playerScores;
     [SerializeField] private RectTransform screenWipe; //90, 270 (rotation)
     [SerializeField] private float tweenTime = 1f;
     [SerializeField] private Ease easeType;
     [SerializeField] private Color[] playerColors;
     [SerializeField] private MMF_Player roundWonFeedback;
+    [SerializeField] private int requiredScoreToWin = 3;
 
     private void Awake()
     {
@@ -63,6 +66,19 @@ public class GameManager : MonoBehaviour
             currentIndex++;
             newPlayerTransform.parent = playerParent;
         }
+
+        if (FindObjectOfType<GameStartManager>())
+        {
+            FindObjectOfType<GameStartManager>().OnPlayerJoined();
+        }
+    }
+
+    public void OnPlayerLeft()
+    {
+        if (FindObjectOfType<GameStartManager>())
+        {
+            FindObjectOfType<GameStartManager>().OnPlayerLeft();
+        }
     }
 
     public void TransitionFromLobby()
@@ -91,7 +107,8 @@ public class GameManager : MonoBehaviour
         }
 
         Timer.Register(fadeDelay, () => screenWipe.DOAnchorPosX(0f, tweenTime).SetEase(Ease.InOutSine).SetUpdate(true)
-            .OnComplete(() => StartCoroutine(TransitionToNewLevelCoroutine(firstTransition, roundWinner))), useRealTime: true);
+                .OnComplete(() => StartCoroutine(TransitionToNewLevelCoroutine(gameStartTransition, roundWinner))),
+            useRealTime: true);
     }
 
     private void FocusOnWinner(Transform roundWinnerTransform)
@@ -119,24 +136,38 @@ public class GameManager : MonoBehaviour
             Destroy(cc.gameObject);
         }
 
-        
-        int newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings);
+
+        int newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings - 1);
 
         while (newLevel == lastLevelScene)
         {
-            newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings);
+            newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings - 1);
         }
 
         lastLevelScene = newLevel;
 
+        bool gameWon = false;
+
         if (roundWinner != null)
         {
             roundWinner.RoundWon();
-            if (SetCrownHolder());
+            if (SetCrownHolder(out PlayerScoreManager winner))
             {
-                
+                ClearPlayerPowerUps();
+                gameWon = true;
+                playerWinParticleSystem = Instantiate(playerWinParticleSystemPrefab, winner.transform);
+                newLevel = SceneManager.sceneCountInBuildSettings - 1;
             }
         }
+
+        if (gameStartTransition)
+        {
+            SetCrownHolder(out _);
+            
+            if (playerWinParticleSystem)
+                Destroy(playerWinParticleSystem);
+        }
+
         yield return new WaitForSeconds(1.5f);
 
         var levelLoading = SceneManager.LoadSceneAsync(newLevel);
@@ -150,7 +181,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(.5f);
 
 
-        if (firstTransition)
+        if (gameStartTransition)
         {
             //tween title
             title.DOAnchorPosX(-700f, tweenTime).SetEase(easeType);
@@ -158,12 +189,27 @@ public class GameManager : MonoBehaviour
             objective.DOAnchorPosY(200f, tweenTime).SetEase(easeType);
             //tween player score
             playerScores.DOAnchorPosY(-225f, tweenTime).SetEase(easeType);
+            
+            gameStartTransition = false;
         }
 
         SetUpPlayers();
-        UpdateScoreRequirement();
+        if (gameWon)
+        {
+            gameStartTransition = true;
+            playerInputManager.EnableJoining();
+            ResetPlayerScores();
 
-        firstTransition = false;
+            title.DOAnchorPosX(0f, tweenTime).SetEase(easeType);
+
+            objective.DOAnchorPosY(400f, tweenTime).SetEase(easeType);
+
+            playerScores.DOAnchorPosY(-435f, tweenTime).SetEase(easeType);
+        }
+        else
+        {
+            UpdateScoreRequirement();
+        }
 
         foreach (var flockController in FindObjectsOfType<FlockController>())
         {
@@ -171,7 +217,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool SetCrownHolder()
+    private void ClearPlayerPowerUps()
+    {
+        foreach (PlayerScoreManager playerScoreManager in FindObjectsOfType<PlayerScoreManager>())
+        {
+            foreach (PowerUp powerUp in playerScoreManager.GetComponents<PowerUp>())
+            {
+                Destroy(powerUp);
+            }
+        }
+    }
+
+    private void ResetPlayerScores()
+    {
+        foreach (PlayerScoreManager playerScoreManager in FindObjectsOfType<PlayerScoreManager>())
+        {
+            playerScoreManager.ResetScoreCircles();
+            playerScoreManager.roundsWon = 0;
+        }
+    }
+
+    private bool SetCrownHolder(out PlayerScoreManager leader)
     {
         int highestScore = 0;
         PlayerScoreManager[] playerScoreManagers = FindObjectsOfType<PlayerScoreManager>();
@@ -183,7 +249,7 @@ public class GameManager : MonoBehaviour
         }
 
         bool tied = false;
-        PlayerScoreManager leader = null;
+        leader = null;
 
         foreach (PlayerScoreManager playerScoreManager in playerScoreManagers)
         {
@@ -202,7 +268,7 @@ public class GameManager : MonoBehaviour
         if (!tied)
             leader.ToggleCrown(true);
 
-        return highestScore == 3;
+        return highestScore == requiredScoreToWin;
     }
 
     private void SetUpPlayers()

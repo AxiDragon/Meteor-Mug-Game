@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityTimer;
@@ -7,7 +8,7 @@ using UnityTimer;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float speedTarget = 5f;
-    [SerializeField] private float speed = 12f;
+    [SerializeField] public float speed = 12f;
     [SerializeField] private float speedCap = 12f;
     public bool canMove = true;
     private PlayerAimer aimer;
@@ -15,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveInput;
     private Rigidbody rb;
     private Animator animator;
+    private bool isThrowing;
 
     public bool CanMove
     {
@@ -40,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
     {
         var move = Quaternion.AngleAxis(cameraTransform.eulerAngles.y, Vector3.up) * moveInput;
 
-        if (aimer.aimInput.magnitude > aimer.aimTurnInputThreshold)
+        if (aimer.aimInput.magnitude > aimer.aimTurnInputThreshold || isThrowing)
         {
             transform.LookAt(transform.position + aimer.angledAimInput);
         }
@@ -74,7 +76,22 @@ public class PlayerMovement : MonoBehaviour
         var horizontalVelocity = Vector3.Scale(rb.velocity, new Vector3(1f, 0f, 1f)).magnitude;
         return Mathf.Min(3f, speedTarget / horizontalVelocity);
     }
+    
+    //Animation Event
+    [UsedImplicitly]
+    public void OnStartThrow()
+    {
+        isThrowing = true;
+    }
+    
+    //Animation Event
+    [UsedImplicitly]
+    public void OnEndThrow()
+    {
+        isThrowing = false;
+    }
 
+    [UsedImplicitly]
     public void OnMove(InputValue value)
     {
         if (!CanMove)

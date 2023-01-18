@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class GameStartManager : MonoBehaviour
 {
@@ -15,13 +16,15 @@ public class GameStartManager : MonoBehaviour
     private float timer;
     private bool timing;
     private bool gameStarted;
-    public UnityEvent onGameStart;
     [SerializeField] private TextMeshPro playerCountText;
     [SerializeField] private TextMeshPro timerText;
 
     private void Start()
     {
         timer = countdownTime;
+        PlayerInputManager playerInputManager = FindObjectOfType<PlayerInputManager>();
+        playerCount = playerInputManager.playerCount;
+        UpdatePlayerReadiness();
     }
 
     private void Update()
@@ -33,7 +36,7 @@ public class GameStartManager : MonoBehaviour
 
             if (timer == 0f && !gameStarted)
             {
-                onGameStart?.Invoke();
+                FindObjectOfType<GameManager>().TransitionFromLobby();
                 gameStarted = true;
             }
                 
@@ -67,7 +70,6 @@ public class GameStartManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
         if (other.CompareTag("Player"))
         {
             playersInsideOfCollider++;
@@ -93,5 +95,6 @@ public class GameStartManager : MonoBehaviour
     public void OnPlayerLeft()
     {
         playerCount--;
+        UpdatePlayerReadiness();
     }
 }

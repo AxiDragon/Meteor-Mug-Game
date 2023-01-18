@@ -44,6 +44,7 @@ public class LevelObjectiveCountEditor : Editor
             }
             
             levelObjectiveCount.objectiveCount[0] = chickCount;
+            EditorUtility.SetDirty(this);
         }
     }
 }

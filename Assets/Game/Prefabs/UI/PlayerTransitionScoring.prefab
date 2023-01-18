@@ -171,7 +171,7 @@ MonoBehaviour:
   TimescaleMode: 0
   Mode: 1
   TargetTransform: {fileID: 0}
-  TargetRectTransform: {fileID: 2778638381603840662}
+  TargetRectTransform: {fileID: 3404518352862851469}
   ShakeSpeed: 50
   ShakeRange: 20
   OscillationOffset: 0

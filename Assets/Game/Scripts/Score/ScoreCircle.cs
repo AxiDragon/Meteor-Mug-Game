@@ -1,16 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
 using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ScoreCircle : MonoBehaviour
 {
-    private bool triggered = false;
     private Image image;
     private Color startingColor;
+    private bool triggered;
 
     private void Awake()
     {

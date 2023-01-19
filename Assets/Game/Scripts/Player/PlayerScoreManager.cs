@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using MoreMountains.Feedbacks;
 using TMPro;
 using UnityEngine;
@@ -8,17 +5,10 @@ using UnityEngine.UI;
 
 public class PlayerScoreManager : MonoBehaviour
 {
-    private FlockController flockController;
     [SerializeField] private Image playerScoreUIPrefab;
     [SerializeField] private Image playerTransitionScoreUIPrefab;
-    private ScoreCircle[] scoreCircles;
-    private Image playerScoreUI;
-    private Image playerTransitionScoreUI;
-    private TextMeshProUGUI scoreText;
-    private MMPositionShaker shaker;
     [SerializeField] private float positiveShakeIntensity = 20;
     [SerializeField] private float negativeShakeIntensity = 10;
-    private int currentScore = 0;
     [SerializeField] private string playerScoreManagerTag;
     [SerializeField] private string playerTransitionScoreManagerTag;
     [SerializeField] private Color backgroundColorMultiply;
@@ -26,8 +16,15 @@ public class PlayerScoreManager : MonoBehaviour
     [SerializeField] private GameObject crown;
 
     [HideInInspector] public int roundsWon;
+    private int currentScore;
+    private FlockController flockController;
+    private Image playerScoreUI;
+    private Image playerTransitionScoreUI;
+    private ScoreCircle[] scoreCircles;
+    private TextMeshProUGUI scoreText;
+    private MMPositionShaker shaker;
 
-    void Awake()
+    private void Awake()
     {
         flockController = GetComponent<FlockController>();
     }
@@ -42,7 +39,7 @@ public class PlayerScoreManager : MonoBehaviour
         playerTransitionScoreUI = Instantiate(playerTransitionScoreUIPrefab,
             GameObject.FindWithTag(playerTransitionScoreManagerTag).transform);
         playerTransitionScoreUI.color = flockController.FlockColor * backgroundColorMultiply;
-        
+
         scoreCircles = playerTransitionScoreUI.GetComponentsInChildren<ScoreCircle>();
 
         ResetScoreCircles();
@@ -60,10 +57,8 @@ public class PlayerScoreManager : MonoBehaviour
 
     public void ResetScoreCircles()
     {
-        for (int i = 0; i < scoreCircles.Length; i++)
-        {
+        for (var i = 0; i < scoreCircles.Length; i++)
             scoreCircles[i].AssignStartingColor(flockController.FlockColor * scoreCircleColorMultiply);
-        }
     }
 
     private void UpdateScore(int score)
@@ -77,7 +72,7 @@ public class PlayerScoreManager : MonoBehaviour
     public void RoundWon()
     {
         roundsWon++;
-        
+
         playerTransitionScoreUI.GetComponent<MMRotationShaker>().Play();
         playerTransitionScoreUI.GetComponent<MMPositionShaker>().Play();
         scoreCircles[roundsWon - 1].TriggerScoring(flockController.FlockColor);

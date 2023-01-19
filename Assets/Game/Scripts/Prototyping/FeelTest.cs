@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using MoreMountains.Feedbacks;
 using UnityEngine;
 
@@ -12,7 +9,6 @@ public class FeelTest : MonoBehaviour
     {
         if (GUI.Button(new Rect(20f, 20f, 200f, 50f), "Do Stuffs"))
         {
-            
         }
     }
 }

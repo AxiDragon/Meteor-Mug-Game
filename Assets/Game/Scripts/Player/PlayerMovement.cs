@@ -1,4 +1,3 @@
-using System;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,11 +11,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float speedCap = 12f;
     public bool canMove = true;
     private PlayerAimer aimer;
+    private Animator animator;
     private Transform cameraTransform;
+    private bool isThrowing;
     private Vector3 moveInput;
     private Rigidbody rb;
-    private Animator animator;
-    private bool isThrowing;
 
     public bool CanMove
     {
@@ -24,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
         set
         {
             canMove = value;
-            
+
             if (!canMove)
                 moveInput = Vector3.zero;
         }
@@ -55,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         rb.AddForce(move * (GetSpeedModifier() * (speed * Time.deltaTime)), ForceMode.VelocityChange);
-        
+
         animator.SetFloat("speed", rb.velocity.magnitude / 12f);
     }
 
@@ -66,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckSpeedCap()
     {
-        Vector3 xzVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        var xzVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         xzVelocity = Vector3.ClampMagnitude(xzVelocity, speedCap);
         rb.velocity = new Vector3(xzVelocity.x, rb.velocity.y, xzVelocity.z);
     }
@@ -76,14 +75,14 @@ public class PlayerMovement : MonoBehaviour
         var horizontalVelocity = Vector3.Scale(rb.velocity, new Vector3(1f, 0f, 1f)).magnitude;
         return Mathf.Min(3f, speedTarget / horizontalVelocity);
     }
-    
+
     //Animation Event
     [UsedImplicitly]
     public void OnStartThrow()
     {
         isThrowing = true;
     }
-    
+
     //Animation Event
     [UsedImplicitly]
     public void OnEndThrow()
@@ -96,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!CanMove)
             return;
-        
+
         var inputValue = value.Get<Vector2>();
         moveInput = new Vector3(inputValue.x, 0f, inputValue.y);
     }

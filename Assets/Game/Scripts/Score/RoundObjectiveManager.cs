@@ -1,25 +1,21 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using TMPro;
 using UnityEngine;
-using UnityTimer;
 
 public class RoundObjectiveManager : MonoBehaviour
 {
-    private FlockController[] flockControllers = new [] { (FlockController)null };
-    private GameManager gameManager;
-    public bool roundWon = false;
-    private int scoringTarget = 10;
+    public bool roundWon;
     [SerializeField] private TMP_Text objectiveText;
+    private FlockController[] flockControllers = { (FlockController)null };
+    private GameManager gameManager;
+    private int scoringTarget = 10;
 
     public int ScoringTarget
     {
         get => scoringTarget;
         set
         {
-            scoringTarget = value; 
+            scoringTarget = value;
             objectiveText.text = ScoringTarget.ToString();
         }
     }
@@ -33,37 +29,33 @@ public class RoundObjectiveManager : MonoBehaviour
     {
         RefreshFlockControllerArray();
     }
-    
+
     public void OnPlayerLeft()
     {
         RefreshFlockControllerArray();
     }
-    
+
     private void RefreshFlockControllerArray()
     {
-        for (int i = 0; i < flockControllers.Length; i++)
-        {
-            if (flockControllers[i] != null) flockControllers[i].flock.CollectionChanged -= CheckScoring;
-        }
+        for (var i = 0; i < flockControllers.Length; i++)
+            if (flockControllers[i] != null)
+                flockControllers[i].flock.CollectionChanged -= CheckScoring;
 
         flockControllers = FindObjectsOfType<FlockController>();
-        
-        for (int i = 0; i < flockControllers.Length; i++)
-        {
-            if (flockControllers != null) flockControllers[i].flock.CollectionChanged += CheckScoring;
-        }
+
+        for (var i = 0; i < flockControllers.Length; i++)
+            if (flockControllers != null)
+                flockControllers[i].flock.CollectionChanged += CheckScoring;
     }
 
     private void CheckScoring(object sender, NotifyCollectionChangedEventArgs e)
     {
-        for (int i = 0; i < flockControllers.Length; i++)
-        {
+        for (var i = 0; i < flockControllers.Length; i++)
             if (flockControllers[i].flock.Count >= ScoringTarget && !roundWon)
             {
-                PlayerScoreManager winner = flockControllers[i].GetComponent<PlayerScoreManager>();
+                var winner = flockControllers[i].GetComponent<PlayerScoreManager>();
                 roundWon = true;
                 gameManager.TransitionToNewLevel(roundWinner: winner);
             }
-        }
     }
 }

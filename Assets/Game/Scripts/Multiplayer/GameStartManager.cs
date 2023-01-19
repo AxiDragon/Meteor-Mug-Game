@@ -1,28 +1,25 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class GameStartManager : MonoBehaviour
 {
-    private int playerCount = 0;
-    private int playersInsideOfCollider = 0;
     [SerializeField] private float countdownTime = 3f;
-    [Range(0,4)]
-    [SerializeField] private int requiredPlayersForStart = 2;
-    private float timer;
-    private bool timing;
-    private bool gameStarted;
+
+    [Range(0, 4)] [SerializeField] private int requiredPlayersForStart = 2;
+
     [SerializeField] private TextMeshPro playerCountText;
     [SerializeField] private TextMeshPro timerText;
+    private bool gameStarted;
+    private int playerCount;
+    private int playersInsideOfCollider;
+    private float timer;
+    private bool timing;
 
     private void Start()
     {
         timer = countdownTime;
-        PlayerInputManager playerInputManager = FindObjectOfType<PlayerInputManager>();
+        var playerInputManager = FindObjectOfType<PlayerInputManager>();
         playerCount = playerInputManager.playerCount;
         UpdatePlayerReadiness();
     }
@@ -39,14 +36,33 @@ public class GameStartManager : MonoBehaviour
                 FindObjectOfType<GameManager>().TransitionFromLobby();
                 gameStarted = true;
             }
-                
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playersInsideOfCollider++;
+            UpdatePlayerReadiness();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playersInsideOfCollider--;
+            UpdatePlayerReadiness();
         }
     }
 
     private void UpdatePlayerReadiness()
     {
         playerCountText.text =
-            playerCount < requiredPlayersForStart ? $"Need at least {requiredPlayersForStart} players!" : $"{playersInsideOfCollider} out of {playerCount}";
+            playerCount < requiredPlayersForStart
+                ? $"Need at least {requiredPlayersForStart} players!"
+                : $"{playersInsideOfCollider} out of {playerCount}";
 
         if (AllPlayersReady())
         {
@@ -66,24 +82,6 @@ public class GameStartManager : MonoBehaviour
             return false;
 
         return playersInsideOfCollider == playerCount;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playersInsideOfCollider++;
-            UpdatePlayerReadiness();
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playersInsideOfCollider--;
-            UpdatePlayerReadiness();
-        }
     }
 
     public void OnPlayerJoined()

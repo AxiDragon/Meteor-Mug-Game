@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class RigidbodyMagnet : MonoBehaviour
@@ -20,18 +16,20 @@ public class RigidbodyMagnet : MonoBehaviour
 
     private void Update()
     {
-        foreach (Collider coll in Physics.OverlapSphere(transform.position, magnetRange, affectedLayers))
-        {
+        foreach (var coll in Physics.OverlapSphere(transform.position, magnetRange, affectedLayers))
             if (coll.TryGetComponent(out Rigidbody hitRigidbody))
-            {
                 if (Attracted(hitRigidbody))
                 {
-                    float distance = Mathf.Max(Vector3.Distance(transform.position, hitRigidbody.position), 1f);
-                    Vector3 direction = (transform.position - hitRigidbody.position).normalized;
+                    var distance = Mathf.Max(Vector3.Distance(transform.position, hitRigidbody.position), 1f);
+                    var direction = (transform.position - hitRigidbody.position).normalized;
                     hitRigidbody.AddForce(direction / distance * (magnetForce * magnetRange));
                 }
-            }
-        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, magnetRange);
     }
 
     private bool Attracted(Rigidbody hitRigidbody)
@@ -46,17 +44,9 @@ public class RigidbodyMagnet : MonoBehaviour
         }
 
         if (hitRigidbody.TryGetComponent<FlockController>(out var hitFlockController))
-        {
             if (chickController != null && chickController.owner == hitFlockController)
                 return false;
-        }
 
         return true;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, magnetRange);
     }
 }

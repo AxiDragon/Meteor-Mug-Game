@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using DG.Tweening;
@@ -11,14 +10,7 @@ using UnityTimer;
 
 public class GameManager : MonoBehaviour
 {
-    private bool gameStartTransition = true;
-    private int currentIndex = 0;
-    private int lastLevelScene = 0;
-    private CinemachineTargetGroup targetGroup;
-    private PlayerInputManager playerInputManager;
-    private RoundObjectiveManager roundObjectiveManager;
     [SerializeField] private ParticleSystem playerWinParticleSystemPrefab;
-    private ParticleSystem playerWinParticleSystem;
     [SerializeField] private Transform playerParent;
     [SerializeField] private RectTransform title; //0, 700
     [SerializeField] private RectTransform objective;
@@ -29,6 +21,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Color[] playerColors;
     [SerializeField] private MMF_Player roundWonFeedback;
     [SerializeField] private int requiredScoreToWin = 3;
+    private int currentIndex;
+    private bool gameStartTransition = true;
+    private int lastLevelScene;
+    private PlayerInputManager playerInputManager;
+    private ParticleSystem playerWinParticleSystem;
+    private RoundObjectiveManager roundObjectiveManager;
+    private CinemachineTargetGroup targetGroup;
 
     private void Awake()
     {
@@ -44,13 +43,11 @@ public class GameManager : MonoBehaviour
 
         foreach (var player in GameObject.FindGameObjectsWithTag("Player"))
         {
-            bool alreadyAccountedFor = false;
+            var alreadyAccountedFor = false;
 
             for (var i = 0; i < targetGroup.m_Targets.Length; i++)
-            {
                 if (player.transform == targetGroup.m_Targets[i].target)
                     alreadyAccountedFor = true;
-            }
 
             if (alreadyAccountedFor)
                 continue;
@@ -67,18 +64,12 @@ public class GameManager : MonoBehaviour
             newPlayerTransform.parent = playerParent;
         }
 
-        if (FindObjectOfType<GameStartManager>())
-        {
-            FindObjectOfType<GameStartManager>().OnPlayerJoined();
-        }
+        if (FindObjectOfType<GameStartManager>()) FindObjectOfType<GameStartManager>().OnPlayerJoined();
     }
 
     public void OnPlayerLeft()
     {
-        if (FindObjectOfType<GameStartManager>())
-        {
-            FindObjectOfType<GameStartManager>().OnPlayerLeft();
-        }
+        if (FindObjectOfType<GameStartManager>()) FindObjectOfType<GameStartManager>().OnPlayerLeft();
     }
 
     public void TransitionFromLobby()
@@ -89,15 +80,11 @@ public class GameManager : MonoBehaviour
     public void TransitionToNewLevel(bool canPlayerJoin = false, PlayerScoreManager roundWinner = null)
     {
         if (canPlayerJoin)
-        {
             playerInputManager.EnableJoining();
-        }
         else
-        {
             playerInputManager.DisableJoining();
-        }
 
-        float fadeDelay = 0f;
+        var fadeDelay = 0f;
 
         if (roundWinner != null)
         {
@@ -113,45 +100,34 @@ public class GameManager : MonoBehaviour
 
     private void FocusOnWinner(Transform roundWinnerTransform)
     {
-        for (int i = 0; i < targetGroup.m_Targets.Length; i++)
-        {
+        for (var i = 0; i < targetGroup.m_Targets.Length; i++)
             if (i == 0)
                 targetGroup.m_Targets[i].target = roundWinnerTransform;
             else
                 targetGroup.m_Targets[i].target = null;
-        }
     }
 
-    IEnumerator TransitionToNewLevelCoroutine(bool transition, PlayerScoreManager roundWinner = null)
+    private IEnumerator TransitionToNewLevelCoroutine(bool transition, PlayerScoreManager roundWinner = null)
     {
         yield return new WaitForEndOfFrame();
 
-        foreach (var flockController in FindObjectsOfType<FlockController>())
-        {
-            flockController.ReleaseFlock();
-        }
+        foreach (var flockController in FindObjectsOfType<FlockController>()) flockController.ReleaseFlock();
 
-        foreach (var cc in FindObjectsOfType<ChickController>())
-        {
-            Destroy(cc.gameObject);
-        }
+        foreach (var cc in FindObjectsOfType<ChickController>()) Destroy(cc.gameObject);
 
 
-        int newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings - 1);
+        var newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings - 1);
 
-        while (newLevel == lastLevelScene)
-        {
-            newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings - 1);
-        }
+        while (newLevel == lastLevelScene) newLevel = Random.Range(1, SceneManager.sceneCountInBuildSettings - 1);
 
         lastLevelScene = newLevel;
 
-        bool gameWon = false;
+        var gameWon = false;
 
         if (roundWinner != null)
         {
             roundWinner.RoundWon();
-            if (SetCrownHolder(out PlayerScoreManager winner))
+            if (SetCrownHolder(out var winner))
             {
                 ClearPlayerPowerUps();
                 gameWon = true;
@@ -171,10 +147,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         var levelLoading = SceneManager.LoadSceneAsync(newLevel);
-        while (!levelLoading.isDone)
-        {
-            yield return null;
-        }
+        while (!levelLoading.isDone) yield return null;
 
         screenWipe.DOAnchorPosX(2000f, tweenTime).SetEase(Ease.InOutSine).SetUpdate(true);
 
@@ -182,10 +155,7 @@ public class GameManager : MonoBehaviour
         if (!gameWon)
             UpdateScoreRequirement();
 
-        foreach (var flockController in FindObjectsOfType<FlockController>())
-        {
-            flockController.ReleaseFlock();
-        }
+        foreach (var flockController in FindObjectsOfType<FlockController>()) flockController.ReleaseFlock();
 
         yield return new WaitForSeconds(.5f);
 
@@ -217,18 +187,14 @@ public class GameManager : MonoBehaviour
 
     private void ClearPlayerPowerUps()
     {
-        foreach (PlayerScoreManager playerScoreManager in FindObjectsOfType<PlayerScoreManager>())
-        {
-            foreach (PowerUp powerUp in playerScoreManager.GetComponents<PowerUp>())
-            {
-                Destroy(powerUp);
-            }
-        }
+        foreach (var playerScoreManager in FindObjectsOfType<PlayerScoreManager>())
+        foreach (var powerUp in playerScoreManager.GetComponents<PowerUp>())
+            Destroy(powerUp);
     }
 
     private void ResetPlayerScores()
     {
-        foreach (PlayerScoreManager playerScoreManager in FindObjectsOfType<PlayerScoreManager>())
+        foreach (var playerScoreManager in FindObjectsOfType<PlayerScoreManager>())
         {
             playerScoreManager.ResetScoreCircles();
             playerScoreManager.roundsWon = 0;
@@ -237,20 +203,19 @@ public class GameManager : MonoBehaviour
 
     private bool SetCrownHolder(out PlayerScoreManager leader)
     {
-        int highestScore = 0;
-        PlayerScoreManager[] playerScoreManagers = FindObjectsOfType<PlayerScoreManager>();
+        var highestScore = 0;
+        var playerScoreManagers = FindObjectsOfType<PlayerScoreManager>();
 
-        foreach (PlayerScoreManager playerScoreManager in playerScoreManagers)
+        foreach (var playerScoreManager in playerScoreManagers)
         {
             highestScore = Mathf.Max(playerScoreManager.roundsWon, highestScore);
-            playerScoreManager.ToggleCrown(false);
+            playerScoreManager.ToggleCrown();
         }
 
-        bool tied = false;
+        var tied = false;
         leader = null;
 
-        foreach (PlayerScoreManager playerScoreManager in playerScoreManagers)
-        {
+        foreach (var playerScoreManager in playerScoreManagers)
             if (highestScore == playerScoreManager.roundsWon)
             {
                 if (leader != null)
@@ -261,7 +226,6 @@ public class GameManager : MonoBehaviour
 
                 leader = playerScoreManager;
             }
-        }
 
         if (!tied)
             leader.ToggleCrown(true);
@@ -271,15 +235,16 @@ public class GameManager : MonoBehaviour
 
     private void SetUpPlayers()
     {
-        Transform spawnPositions = FindObjectOfType<SpawnPositions>().transform;
+        var spawnPositions = FindObjectOfType<SpawnPositions>().transform;
 
-        List<PlayerScoreManager> players = FindObjectsOfType<PlayerScoreManager>().ToList();
+        var players = FindObjectsOfType<PlayerScoreManager>().ToList();
         players.OrderBy(player => player.roundsWon);
-        int positionModifier = 0;
+        var positionModifier = 0;
 
-        for (int i = 0; i < players.Count; i++)
+        for (var i = 0; i < players.Count; i++)
         {
-            players[i].transform.position = spawnPositions.GetChild(spawnPositions.childCount - 1 - (i + positionModifier)).position;
+            players[i].transform.position =
+                spawnPositions.GetChild(spawnPositions.childCount - 1 - (i + positionModifier)).position;
             players[i].GetComponent<ChickThrower>().canThrow = true;
             targetGroup.m_Targets[i].target = players[i].transform;
 
@@ -290,7 +255,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateScoreRequirement()
     {
-        int p = playerInputManager.playerCount;
+        var p = playerInputManager.playerCount;
         roundObjectiveManager.ScoringTarget = FindObjectOfType<LevelObjectiveCount>().objectiveCount[p - 1];
         roundObjectiveManager.roundWon = false;
     }

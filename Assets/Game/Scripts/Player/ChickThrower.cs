@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
@@ -16,7 +15,7 @@ public class ChickThrower : MonoBehaviour
     [SerializeField] private float upwardThrowAngle = 35f;
     [Header("Chick Striking")] public float strikePower;
     public float strikeRange;
-    [Header("Other")] [SerializeField] private bool infiniteThrowsMode = false;
+    [Header("Other")] [SerializeField] private bool infiniteThrowsMode;
     [SerializeField] private float autoAimRange = 25f;
     [SerializeField] private float autoAimRadius = 2f;
     [SerializeField] private float throwCollisionImmunityTime = .1f;
@@ -25,19 +24,19 @@ public class ChickThrower : MonoBehaviour
 
     [HideInInspector] public float thrownChickSize = 1f;
     [HideInInspector] public float thrownChickMass = 1f;
-
-    private float flickTimer = 0f;
-    private PlayerAimer aimer;
-    private LineRenderer aimLine;
     public bool canThrow = true;
-    private bool isAiming = false;
+    private PlayerAimer aimer;
+    private ChickController aimingChick;
+    private LineRenderer aimLine;
 
     private Animator animator;
+
+    private float flickTimer;
     private FlockController flockController;
+    private bool isAiming;
+    private ChickController mostRecentThrownChick;
 
     private Vector2 previousAimInput;
-    private ChickController aimingChick;
-    private ChickController mostRecentThrownChick;
 
     public bool IsAiming
     {
@@ -71,12 +70,23 @@ public class ChickThrower : MonoBehaviour
     {
         UpdateLine();
 
-        if (IsAiming && aimingChick)
-        {
-            aimingChick.transform.localPosition = Vector3.zero;
-        }
+        if (IsAiming && aimingChick) aimingChick.transform.localPosition = Vector3.zero;
 
         flickTimer = Mathf.Max(0f, flickTimer - Time.deltaTime);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        var throwingDirection = Quaternion.AngleAxis(-upwardThrowAngle, transform.right) * transform.forward *
+                                throwingForce;
+
+        Gizmos.DrawLine(throwingPoint.position, throwingPoint.position + throwingDirection);
+        Gizmos.DrawWireSphere(transform.position, strikeRange);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(throwingPoint.position, autoAimRadius);
+        Gizmos.DrawWireSphere(throwingPoint.position + throwingDirection.normalized * autoAimRange, autoAimRadius);
     }
 
     private void UpdateLine()
@@ -130,13 +140,8 @@ public class ChickThrower : MonoBehaviour
         if (IsFlicking(inputValue) && canThrow)
         {
             if (flockController.GetChickCount() > 0)
-            {
                 Throw();
-            }
-            else if (infiniteThrowsMode)
-            {
-                ThrowSphere();
-            }
+            else if (infiniteThrowsMode) ThrowSphere();
         }
 
         IsAiming = inputValue.magnitude > aimStartThreshold;
@@ -169,7 +174,7 @@ public class ChickThrower : MonoBehaviour
         aimingChick.StartChickThrowTimeOutInvoke();
 
         aimingChick.rb.velocity = Vector3.zero;
-        Vector3 throwingDirection = GetThrowingDirection();
+        var throwingDirection = GetThrowingDirection();
         aimingChick.rb.AddForce(throwingDirection * throwingForce, ForceMode.VelocityChange);
 
         aimingChick.canStrike = true;
@@ -179,9 +184,7 @@ public class ChickThrower : MonoBehaviour
         Timer.Register(throwCollisionImmunityTime, () =>
         {
             if (mostRecentThrownChick.currentChickState != ChickController.ChickState.Idle)
-            {
                 mostRecentThrownChick.gameObject.layer = thrownChickLayerMaskID;
-            }
         });
 
         animator.SetTrigger("throw");
@@ -189,11 +192,11 @@ public class ChickThrower : MonoBehaviour
 
     private Vector3 GetThrowingDirection()
     {
-        Vector3 direction = Quaternion.AngleAxis(-upwardThrowAngle, transform.right) * aimer.angledAimInput;
+        var direction = Quaternion.AngleAxis(-upwardThrowAngle, transform.right) * aimer.angledAimInput;
         List<AutoAimTarget> inAutoAimTargets = new();
 
-        Ray ray = new Ray(throwingPoint.position, throwingPoint.position + direction.normalized);
-        RaycastHit[] hits = Physics.SphereCastAll(ray, autoAimRadius, autoAimRange);
+        var ray = new Ray(throwingPoint.position, throwingPoint.position + direction.normalized);
+        var hits = Physics.SphereCastAll(ray, autoAimRadius, autoAimRange);
 
         foreach (var c in hits)
         {
@@ -214,21 +217,21 @@ public class ChickThrower : MonoBehaviour
 
         if (inAutoAimTargets.Count == 0)
         {
-            Vector3 modifiedDirection = direction;
+            var modifiedDirection = direction;
             modifiedDirection.y = 0f;
             return modifiedDirection.normalized;
         }
 
-        AutoAimTarget closestTarget = inAutoAimTargets[0];
-        float closestDistance = Mathf.Infinity;
+        var closestTarget = inAutoAimTargets[0];
+        var closestDistance = Mathf.Infinity;
 
-        for (int i = 0; i < inAutoAimTargets.Count; i++)
+        for (var i = 0; i < inAutoAimTargets.Count; i++)
         {
-            float distance = Vector3.Distance(throwingPoint.position, inAutoAimTargets[i].transform.position);
-            
+            var distance = Vector3.Distance(throwingPoint.position, inAutoAimTargets[i].transform.position);
+
             if (distance < autoAimRadius)
                 continue;
-            
+
             if (distance < closestDistance)
             {
                 closestTarget = inAutoAimTargets[i];
@@ -236,7 +239,7 @@ public class ChickThrower : MonoBehaviour
             }
         }
 
-        Vector3 modifiedAutoAim = closestTarget.transform.position - transform.position;
+        var modifiedAutoAim = closestTarget.transform.position - transform.position;
         modifiedAutoAim.y = 0f;
         return modifiedAutoAim.normalized;
     }
@@ -252,30 +255,16 @@ public class ChickThrower : MonoBehaviour
         canThrow = false;
         Timer.Register(throwingCooldown, () => canThrow = true);
 
-        GameObject throwSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Rigidbody throwRb = throwSphere.AddComponent<Rigidbody>();
+        var throwSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        var throwRb = throwSphere.AddComponent<Rigidbody>();
         throwSphere.transform.position = throwingPoint.position;
 
-        Vector3 throwingDirection = Quaternion.AngleAxis(-upwardThrowAngle, transform.right) * aimer.angledAimInput;
+        var throwingDirection = Quaternion.AngleAxis(-upwardThrowAngle, transform.right) * aimer.angledAimInput;
         throwRb.AddForce(throwingDirection * throwingForce);
     }
 
     private bool IsFlicking(Vector2 inputValue)
     {
         return previousAimInput.magnitude - inputValue.magnitude > aimTurnInputDifferenceThreshold;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        Vector3 throwingDirection = Quaternion.AngleAxis(-upwardThrowAngle, transform.right) * transform.forward *
-                                    throwingForce;
-
-        Gizmos.DrawLine(throwingPoint.position, throwingPoint.position + throwingDirection);
-        Gizmos.DrawWireSphere(transform.position, strikeRange);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(throwingPoint.position, autoAimRadius);
-        Gizmos.DrawWireSphere(throwingPoint.position + throwingDirection.normalized * autoAimRange, autoAimRadius);
     }
 }

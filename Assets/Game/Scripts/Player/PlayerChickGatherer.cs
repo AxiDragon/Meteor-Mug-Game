@@ -1,14 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 public class PlayerChickGatherer : MonoBehaviour
 {
     private FlockController flockController;
-    
-    void Awake()
+
+    private void Awake()
     {
         flockController = GetComponentInParent<FlockController>();
     }
@@ -16,9 +13,6 @@ public class PlayerChickGatherer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out ChickController chickController))
-        {
-            flockController.AddFlockMember(chickController);
-        }
+        if (other.TryGetComponent(out ChickController chickController)) flockController.AddFlockMember(chickController);
     }
 }

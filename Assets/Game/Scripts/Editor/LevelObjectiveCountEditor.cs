@@ -1,15 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(LevelObjectiveCount))]
 public class LevelObjectiveCountEditor : Editor
 {
-    private static int chickCount = 0;
+    private static int chickCount;
     private static bool roundUp = true;
-    [Range(0, 1)] private static float controlNeededForWin = 0;
+    [Range(0, 1)] private static float controlNeededForWin;
 
     public override void OnInspectorGUI()
     {
@@ -17,7 +14,7 @@ public class LevelObjectiveCountEditor : Editor
         if (GUILayout.Button("Calculate Chick Count"))
         {
             chickCount = FindObjectsOfType<ChickController>().Length;
-            LevelObjectiveCount levelObjectiveCount = (LevelObjectiveCount)target;
+            var levelObjectiveCount = (LevelObjectiveCount)target;
             levelObjectiveCount.objectiveCount[0] = chickCount;
         }
 
@@ -35,14 +32,14 @@ public class LevelObjectiveCountEditor : Editor
         if (GUILayout.Button("Calculate Win Chick Count"))
         {
             chickCount = FindObjectsOfType<ChickController>().Length;
-            LevelObjectiveCount levelObjectiveCount = (LevelObjectiveCount)target;
+            var levelObjectiveCount = (LevelObjectiveCount)target;
 
-            for (int i = 0; i < levelObjectiveCount.objectiveCount.Length; i++)
+            for (var i = 0; i < levelObjectiveCount.objectiveCount.Length; i++)
             {
-                float c = chickCount / ((float)i + 1) * (1 + controlNeededForWin);
+                var c = chickCount / ((float)i + 1) * (1 + controlNeededForWin);
                 levelObjectiveCount.objectiveCount[i] = roundUp ? Mathf.CeilToInt(c) : Mathf.FloorToInt(c);
             }
-            
+
             levelObjectiveCount.objectiveCount[0] = chickCount;
             EditorUtility.SetDirty(this);
         }

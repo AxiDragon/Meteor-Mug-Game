@@ -1,13 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PowerUp : MonoBehaviour
 {
-    private PowerUpScriptableObject powerUpSO;
     public PowerUpType powerUpType;
     private GameObject powerUpObject;
+    private PowerUpScriptableObject powerUpSO;
+
+    private void OnDestroy()
+    {
+        if (powerUpObject != null)
+            Destroy(powerUpObject);
+
+        TriggerPowerUp(powerUpType, false);
+    }
 
     public void AssignPowerUpType(PowerUpScriptableObject powerUp)
     {
@@ -15,9 +20,7 @@ public class PowerUp : MonoBehaviour
         powerUpType = powerUp.powerUpType;
 
         if (powerUp.powerUpObject != null)
-        {
             powerUpObject = GetComponent<PlayerPowerUpManager>().AddPowerUpObject(powerUp.powerUpObject);
-        }
 
         TriggerPowerUp(powerUpType, true);
     }
@@ -28,7 +31,7 @@ public class PowerUp : MonoBehaviour
         {
             case PowerUpType.RunSpeedUp:
             {
-                PlayerMovement pm = GetComponent<PlayerMovement>();
+                var pm = GetComponent<PlayerMovement>();
                 pm.speed = activate
                     ? pm.speed * powerUpSO.modificationMultiplier
                     : pm.speed / powerUpSO.modificationMultiplier;
@@ -37,7 +40,7 @@ public class PowerUp : MonoBehaviour
             }
             case PowerUpType.BiggerRange:
             {
-                PlayerChickGatherer pcg = GetComponentInChildren<PlayerChickGatherer>();
+                var pcg = GetComponentInChildren<PlayerChickGatherer>();
                 pcg.transform.localScale = activate
                     ? pcg.transform.localScale * powerUpSO.modificationMultiplier
                     : pcg.transform.localScale / powerUpSO.modificationMultiplier;
@@ -46,7 +49,7 @@ public class PowerUp : MonoBehaviour
             }
             case PowerUpType.HomingChicks:
             {
-                ChickThrower ct = GetComponent<ChickThrower>();
+                var ct = GetComponent<ChickThrower>();
                 ct.thrownChickMass = activate
                     ? ct.thrownChickMass * powerUpSO.modificationMultiplier
                     : ct.thrownChickMass / powerUpSO.modificationMultiplier;
@@ -54,7 +57,7 @@ public class PowerUp : MonoBehaviour
             }
             case PowerUpType.ImpactUp:
             {
-                ChickThrower ct = GetComponent<ChickThrower>();
+                var ct = GetComponent<ChickThrower>();
 
                 ct.strikePower = activate
                     ? ct.strikePower * powerUpSO.modificationMultiplier
@@ -69,7 +72,7 @@ public class PowerUp : MonoBehaviour
             case PowerUpType.SmallerChicks:
             case PowerUpType.BiggerChicks:
             {
-                ChickThrower ct = GetComponent<ChickThrower>();
+                var ct = GetComponent<ChickThrower>();
                 ct.thrownChickSize = activate
                     ? ct.thrownChickSize * powerUpSO.modificationMultiplier
                     : ct.thrownChickSize / powerUpSO.modificationMultiplier;
@@ -77,7 +80,7 @@ public class PowerUp : MonoBehaviour
             }
             case PowerUpType.ThrowSpeedUp:
             {
-                ChickThrower ct = GetComponent<ChickThrower>();
+                var ct = GetComponent<ChickThrower>();
                 ct.throwingForce = activate
                     ? ct.throwingForce * powerUpSO.modificationMultiplier
                     : ct.throwingForce / powerUpSO.modificationMultiplier;
@@ -92,13 +95,5 @@ public class PowerUp : MonoBehaviour
     private void StartCountdown()
     {
         Destroy(this, powerUpSO.powerUpDuration);
-    }
-
-    private void OnDestroy()
-    {
-        if (powerUpObject != null)
-            Destroy(powerUpObject);
-
-        TriggerPowerUp(powerUpType, false);
     }
 }

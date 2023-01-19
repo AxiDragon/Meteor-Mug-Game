@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityTimer;
 
 [RequireComponent(typeof(AgentMover), typeof(Rigidbody), typeof(Collider))]
 public class ChickController : MonoBehaviour
@@ -14,7 +9,7 @@ public class ChickController : MonoBehaviour
     {
         Idle,
         Following,
-        Thrown,
+        Thrown
     }
 
     public ChickState currentChickState = ChickState.Idle;
@@ -24,7 +19,6 @@ public class ChickController : MonoBehaviour
     [SerializeField] private float maxGroundHitNormalDistance = .2f;
     [SerializeField] private float throwTimeOut = 4f;
     [HideInInspector] public bool held;
-    private int startLayerMask;
 
     [HideInInspector] public float strikePower;
     [HideInInspector] public float strikeRange;
@@ -42,10 +36,11 @@ public class ChickController : MonoBehaviour
     [SerializeField] private MMF_Player playerHit;
     [SerializeField] private MMF_Player baseHit;
     [SerializeField] private MMF_Player hitObject;
-    [Header("Debug")] [SerializeField] private bool showPickupability = false;
+    [Header("Debug")] [SerializeField] private bool showPickupability;
 
     private float rbStartingMass;
     private Vector3 startingSize;
+    private int startLayerMask;
 
     private void Awake()
     {
@@ -66,6 +61,41 @@ public class ChickController : MonoBehaviour
     private void Update()
     {
         UpdateFlockTimeoutTimer();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (currentChickState == ChickState.Thrown)
+        {
+            if (canStrike)
+            {
+                rb.useGravity = true;
+                Strike(collision.gameObject);
+            }
+
+            foreach (var item in collision.contacts)
+                if (Vector3.Distance(item.normal, Vector3.up) < maxGroundHitNormalDistance)
+                {
+                    CancelInvoke(nameof(ChickThrowOver));
+                    ChickThrowOver();
+                }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (showPickupability)
+            if (flockTimeout == 0f)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireSphere(transform.position, 1.2f);
+            }
+
+        if (Application.isPlaying && gameObject.layer != startLayerMask)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(transform.position, .8f);
+        }
     }
 
     private void UpdateFlockTimeoutTimer()
@@ -106,32 +136,11 @@ public class ChickController : MonoBehaviour
         transform.DOScale(startingSize, .25f);
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (currentChickState == ChickState.Thrown)
-        {
-            if (canStrike)
-            {
-                rb.useGravity = true;
-                Strike(collision.gameObject);
-            }
-
-            foreach (var item in collision.contacts)
-            {
-                if (Vector3.Distance(item.normal, Vector3.up) < maxGroundHitNormalDistance)
-                {
-                    CancelInvoke(nameof(ChickThrowOver));
-                    ChickThrowOver();
-                }
-            }
-        }
-    }
-
     public void StartChickThrowTimeOutInvoke()
     {
         Invoke(nameof(ChickThrowOver), throwTimeOut);
     }
-    
+
     public void ChickThrowOver()
     {
         trail.enabled = false;
@@ -142,8 +151,8 @@ public class ChickController : MonoBehaviour
 
     private void Strike(GameObject hitObject)
     {
-        bool hitFlickableObject = false;
-        MMF_Player hitEffectPlayer = regularHit;
+        var hitFlickableObject = false;
+        var hitEffectPlayer = regularHit;
 
         if (hitObject.TryGetComponent(out ChickController cc))
         {
@@ -154,21 +163,20 @@ public class ChickController : MonoBehaviour
 
         if (hitObject.TryGetComponent(out FlockController flockController) && flockController != owner)
         {
-            bool hitShielded = false;
-            foreach (PowerUp powerUp in hitObject.GetComponents<PowerUp>())
-            {
+            var hitShielded = false;
+            foreach (var powerUp in hitObject.GetComponents<PowerUp>())
                 if (powerUp.powerUpType == PowerUpType.Shield && !hitShielded)
                 {
                     hitShielded = true;
                     Destroy(powerUp);
                 }
-            }
 
             if (!hitShielded)
             {
                 flockController.ScatterFlock(strikePower * 10f, strikeRange * 3f);
                 flockController.GetComponent<PlayerMovement>().Stun(.5f);
-                this.hitObject.GetFeedbackOfType<MMF_Flicker>().BoundRenderer = flockController.GetComponentInChildren<Renderer>();
+                this.hitObject.GetFeedbackOfType<MMF_Flicker>().BoundRenderer =
+                    flockController.GetComponentInChildren<Renderer>();
                 hitEffectPlayer = playerHit;
                 hitFlickableObject = true;
             }
@@ -179,9 +187,8 @@ public class ChickController : MonoBehaviour
             hitFlickableObject = true;
             this.hitObject.GetFeedbackOfType<MMF_Flicker>().BoundRenderer = hitObject.GetComponent<Renderer>();
         }
-        
+
         foreach (var c in Physics.OverlapSphere(transform.position, strikeRange))
-        {
             if (c.TryGetComponent(out Rigidbody r))
             {
                 if (r == rb)
@@ -191,24 +198,21 @@ public class ChickController : MonoBehaviour
                 {
                     if (chickController.owner == owner)
                         continue;
-                    
+
                     chickController.TogglePhysics(true);
                     if (chickController.owner && !chickController.held)
-                    {
                         chickController.owner.RemoveFlockMember(chickController);
-                    }
                 }
 
                 r.AddExplosionForce(strikePower, transform.position, strikeRange, 1f, ForceMode.Impulse);
             }
-        }
-        
+
         baseHit.PlayFeedbacks();
         hitEffectPlayer.PlayFeedbacks();
 
         if (!hitFlickableObject)
             this.hitObject.GetFeedbackOfType<MMF_Flicker>().BoundRenderer = colorRenderer;
-            
+
         this.hitObject.PlayFeedbacks();
         canStrike = false;
     }
@@ -218,50 +222,21 @@ public class ChickController : MonoBehaviour
         Color color;
 
         if (colorValue == null)
-        {
             color = defaultColor;
-        }
         else
-        {
             color = (Color)colorValue;
-        }
 
-        Material material = colorRenderer.material;
+        var material = colorRenderer.material;
         material.DOColor(color, .5f);
 
-        for (int i = 0; i < trail.colorGradient.colorKeys.Length; i++)
-        {
-            trail.colorGradient.colorKeys[i].color = color;
-        }
+        for (var i = 0; i < trail.colorGradient.colorKeys.Length; i++) trail.colorGradient.colorKeys[i].color = color;
     }
 
     public void SetTimeout(float time = 0f)
     {
         if (time > 0f)
-        {
             flockTimeout = time;
-        }
         else
-        {
             flockTimeout = postThrowFlockTimeout;
-        }
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (showPickupability)
-        {
-            if (flockTimeout == 0f)
-            {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireSphere(transform.position, 1.2f);
-            }
-        }
-
-        if (Application.isPlaying && gameObject.layer != startLayerMask)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(transform.position, .8f);
-        }
     }
 }

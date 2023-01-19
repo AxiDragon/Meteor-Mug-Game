@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 890966257551752981}
   - component: {fileID: 890966257551752987}
+  - component: {fileID: 2690005670459992216}
   - component: {fileID: 8390839500749082889}
   m_Layer: 0
   m_Name: PowerUpManager
@@ -51,6 +52,23 @@ MonoBehaviour:
   powerUpSpawningChance: 3
   minimumSpawningDistanceFromPlayers: 7
   spawnAttempts: 10
+--- !u!114 &2690005670459992216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890966257551752980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7baef96f76ab3db41bd60472cb0c39c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flickChickPrefab: {fileID: 1728887650741856887, guid: cb651170da9615b4eaadb5fe4a6d163e,
+    type: 3}
+  timeBeforeFirstSpawn: 20
+  timeBetweenSpawns: 10
+  verticalOffset: 80
 --- !u!65 &8390839500749082889
 BoxCollider:
   m_ObjectHideFlags: 0

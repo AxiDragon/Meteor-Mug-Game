@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bigger Collection Range
   m_EditorClassIdentifier: 
   powerUpType: 5
-  powerUpDuration: 30
+  powerUpDuration: 15
   modificationMultiplier: 2
   powerUpName: Collect Range Up!
   powerUpObject: {fileID: 5924050398201627857, guid: f6f80228794a3ea4c8b70ce0b19656d6,

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Smaller Chicks
   m_EditorClassIdentifier: 
   powerUpType: 4
-  powerUpDuration: 30
+  powerUpDuration: 15
   modificationMultiplier: 0.5
   powerUpName: Smaller Chicks!
+  powerUpObject: {fileID: 0}

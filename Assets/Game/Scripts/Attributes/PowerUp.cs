@@ -16,9 +16,7 @@ public class PowerUp : MonoBehaviour
 
         if (powerUp.powerUpObject != null)
         {
-            powerUpObject = Instantiate(powerUp.powerUpObject, GetComponent<PlayerPowerUpManager>().powerUpParent);
-            powerUpObject.transform.localPosition = Vector3.zero;
-            powerUpObject.transform.localRotation = Quaternion.identity;
+            powerUpObject = GetComponent<PlayerPowerUpManager>().AddPowerUpObject(powerUp.powerUpObject);
         }
 
         TriggerPowerUp(powerUpType, true);

@@ -163,7 +163,7 @@ public class GameManager : MonoBehaviour
         if (gameStartTransition)
         {
             SetCrownHolder(out _);
-            
+
             if (playerWinParticleSystem)
                 Destroy(playerWinParticleSystem);
         }
@@ -178,8 +178,16 @@ public class GameManager : MonoBehaviour
 
         screenWipe.DOAnchorPosX(2000f, tweenTime).SetEase(Ease.InOutSine).SetUpdate(true);
 
-        yield return new WaitForSeconds(.5f);
+        SetUpPlayers();
+        if (!gameWon)
+            UpdateScoreRequirement();
 
+        foreach (var flockController in FindObjectsOfType<FlockController>())
+        {
+            flockController.ReleaseFlock();
+        }
+
+        yield return new WaitForSeconds(.5f);
 
         if (gameStartTransition)
         {
@@ -189,11 +197,10 @@ public class GameManager : MonoBehaviour
             objective.DOAnchorPosY(200f, tweenTime).SetEase(easeType);
             //tween player score
             playerScores.DOAnchorPosY(-225f, tweenTime).SetEase(easeType);
-            
+
             gameStartTransition = false;
         }
 
-        SetUpPlayers();
         if (gameWon)
         {
             gameStartTransition = true;
@@ -205,15 +212,6 @@ public class GameManager : MonoBehaviour
             objective.DOAnchorPosY(400f, tweenTime).SetEase(easeType);
 
             playerScores.DOAnchorPosY(-435f, tweenTime).SetEase(easeType);
-        }
-        else
-        {
-            UpdateScoreRequirement();
-        }
-
-        foreach (var flockController in FindObjectsOfType<FlockController>())
-        {
-            flockController.ReleaseFlock();
         }
     }
 
@@ -276,13 +274,17 @@ public class GameManager : MonoBehaviour
         Transform spawnPositions = FindObjectOfType<SpawnPositions>().transform;
 
         List<PlayerScoreManager> players = FindObjectsOfType<PlayerScoreManager>().ToList();
-        players.OrderByDescending(player => player.roundsWon);
+        players.OrderBy(player => player.roundsWon);
+        int positionModifier = 0;
 
         for (int i = 0; i < players.Count; i++)
         {
-            players[i].transform.position = spawnPositions.GetChild(i).position;
+            players[i].transform.position = spawnPositions.GetChild(spawnPositions.childCount - 1 - (i + positionModifier)).position;
             players[i].GetComponent<ChickThrower>().canThrow = true;
             targetGroup.m_Targets[i].target = players[i].transform;
+
+            if (i == 0)
+                positionModifier += 4 - playerInputManager.playerCount;
         }
     }
 

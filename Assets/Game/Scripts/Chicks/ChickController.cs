@@ -157,9 +157,10 @@ public class ChickController : MonoBehaviour
             bool hitShielded = false;
             foreach (PowerUp powerUp in hitObject.GetComponents<PowerUp>())
             {
-                if (powerUp.powerUpType == PowerUpType.Shield)
+                if (powerUp.powerUpType == PowerUpType.Shield && !hitShielded)
                 {
-                    
+                    hitShielded = true;
+                    Destroy(powerUp);
                 }
             }
 

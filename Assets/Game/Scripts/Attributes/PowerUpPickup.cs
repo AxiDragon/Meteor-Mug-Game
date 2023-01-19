@@ -41,8 +41,8 @@ public class PowerUpPickup : MonoBehaviour
 
             Instantiate(pickupGrabParticles, transform.position, Quaternion.identity);
             
-            TextMeshPro tmpro = Instantiate(pickupGrabText, transform.position + Vector3.one * 2f, Quaternion.identity);
-            tmpro.text = powerUpScriptableObject.powerUpName;
+            TextMeshPro tmPro = Instantiate(pickupGrabText, transform.position + Vector3.one * 2f, Quaternion.identity);
+            tmPro.text = powerUpScriptableObject.powerUpName;
             
             transform.DOScale(Vector3.zero, .5f).OnComplete(() => Destroy(gameObject));
         }

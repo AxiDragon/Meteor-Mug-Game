@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpType: 6
   powerUpDuration: 15
-  modificationMultiplier: 2
+  modificationMultiplier: 1
   powerUpName: Homing!
   powerUpObject: {fileID: 3445411852526570504, guid: a760dda92c789d942b79e4c3591749be,
     type: 3}

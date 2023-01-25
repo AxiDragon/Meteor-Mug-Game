@@ -21,6 +21,7 @@ public class ChickThrower : MonoBehaviour
     [SerializeField] private float throwCollisionImmunityTime = .1f;
     [SerializeField] private int thrownChickLayerMaskID;
     [SerializeField] private List<Collider> ignoreFromAutoAim;
+    [SerializeField] private float verticalLineOffset = .1f;
 
     [HideInInspector] public float thrownChickSize = 1f;
     [HideInInspector] public float thrownChickMass = 1f;
@@ -91,11 +92,12 @@ public class ChickThrower : MonoBehaviour
 
     private void UpdateLine()
     {
-        aimLine.SetPosition(0, transform.position);
+        Vector3 basePosition = transform.position + Vector3.up * verticalLineOffset;
+        aimLine.SetPosition(0, basePosition);
         aimLine.SetPosition(1,
             aimer.angledAimInput.magnitude > aimer.aimTurnInputThreshold
-                ? transform.position + aimer.angledAimInput * 5f
-                : transform.position);
+                ? basePosition + aimer.angledAimInput * 5f
+                : basePosition);
     }
 
     public void StartAiming()

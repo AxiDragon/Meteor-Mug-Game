@@ -1,4 +1,5 @@
 using DG.Tweening;
+using MoreMountains.Feedbacks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -41,6 +42,7 @@ public class PowerUpPickup : MonoBehaviour
 
             var tmPro = Instantiate(pickupGrabText, transform.position + Vector3.one * 2f, Quaternion.identity);
             tmPro.text = powerUpScriptableObject.powerUpName;
+            GetComponent<MMF_Player>().PlayFeedbacks();
 
             transform.DOScale(Vector3.zero, .5f).OnComplete(() => Destroy(gameObject));
         }

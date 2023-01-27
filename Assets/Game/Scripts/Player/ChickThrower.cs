@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using JetBrains.Annotations;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityTimer;
@@ -28,7 +30,7 @@ public class ChickThrower : MonoBehaviour
     public bool canThrow = true;
     private PlayerAimer aimer;
     private ChickController aimingChick;
-    private LineRenderer aimLine;
+    [SerializeField] private LineRenderer aimLine;
 
     private Animator animator;
 
@@ -36,6 +38,7 @@ public class ChickThrower : MonoBehaviour
     private FlockController flockController;
     private bool isAiming;
     private ChickController mostRecentThrownChick;
+    private MMF_Player throwSoundFeedback;
 
     private Vector2 previousAimInput;
 
@@ -63,8 +66,8 @@ public class ChickThrower : MonoBehaviour
     {
         aimer = GetComponent<PlayerAimer>();
         flockController = GetComponent<FlockController>();
-        aimLine = GetComponent<LineRenderer>();
         animator = GetComponent<Animator>();
+        throwSoundFeedback = GetComponent<MMF_Player>();
     }
 
     private void Update()
@@ -135,6 +138,7 @@ public class ChickThrower : MonoBehaviour
         aimingChick = null;
     }
 
+    [UsedImplicitly]
     public void OnAim(InputValue value)
     {
         var inputValue = value.Get<Vector2>();
@@ -182,6 +186,8 @@ public class ChickThrower : MonoBehaviour
         aimingChick.canStrike = true;
 
         mostRecentThrownChick = aimingChick;
+        
+        throwSoundFeedback.PlayFeedbacks();
 
         Timer.Register(throwCollisionImmunityTime, () =>
         {

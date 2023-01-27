@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 236679208905321852}
   - component: {fileID: 236679208905321855}
   - component: {fileID: 236679208905321854}
-  - component: {fileID: 236679208905321848}
+  - component: {fileID: 1134245599}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: -20, y: 30, z: -20}
+  m_FollowOffset: {x: -15, y: 20, z: -15}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_AngularDamping: 0
---- !u!114 &236679208905321848
+--- !u!114 &1134245599
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,19 +156,19 @@ MonoBehaviour:
   m_RotationMode: 0
   m_UpdateMethod: 2
   m_Targets:
-  - target: {fileID: 0}
-    weight: 1
-    radius: 6
-  - target: {fileID: 0}
-    weight: 1
-    radius: 6
-  - target: {fileID: 0}
-    weight: 1
-    radius: 6
-  - target: {fileID: 0}
-    weight: 1
-    radius: 6
   - target: {fileID: 236679209971707550}
+    weight: 1
+    radius: 6
+  - target: {fileID: 0}
+    weight: 1
+    radius: 6
+  - target: {fileID: 0}
+    weight: 1
+    radius: 6
+  - target: {fileID: 0}
+    weight: 1
+    radius: 6
+  - target: {fileID: 0}
     weight: 1
     radius: 6
 --- !u!1 &236679209607986548
@@ -369,8 +369,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 236679210345047169}
-  m_LocalRotation: {x: 0.27984816, y: 0.3647052, z: -0.11591692, w: 0.88047624}
-  m_LocalPosition: {x: -20, y: 20, z: -20}
+  m_LocalRotation: {x: 0.3409561, y: 0.35566992, z: -0.14122863, w: 0.85866314}
+  m_LocalPosition: {x: -15, y: 20, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -467,8 +467,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 236679210524842639}
-  m_LocalRotation: {x: 0.27984816, y: 0.3647052, z: -0.11591692, w: 0.88047624}
-  m_LocalPosition: {x: -20, y: 20, z: -20}
+  m_LocalRotation: {x: 0.3409561, y: 0.35566992, z: -0.14122863, w: 0.85866314}
+  m_LocalPosition: {x: -15, y: 20, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -485,7 +485,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.99607843, g: 0.895099, b: 0.7176471, a: 1}
+  m_BackGroundColor: {r: 0.7176471, g: 0.99607843, b: 0.8229065, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -500,7 +500,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 24.432655
+  field of view: 28.85284
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -543,7 +543,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1

@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 5812718493811340833}
   - component: {fileID: 5409342666448021176}
   - component: {fileID: 4771560675099303358}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Crown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3353343840983154811}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wing.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2252444044682423498}
   - component: {fileID: 5305914603039930032}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerChicken
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -211,7 +211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7769358426870954364}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hip.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -329,7 +329,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3506972243884822166}
   - component: {fileID: 8419546513994811404}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Chicken
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -422,7 +422,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1685990481381603160}
   - component: {fileID: 348719873304391021}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -513,7 +513,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6294110881140196447}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerChickenArmature
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -715,7 +715,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3457382692530322286}
   - component: {fileID: 4461773935132332007}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -806,7 +806,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5039649255851134514}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Leg.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -869,7 +869,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5684086350192930035}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wing.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -900,7 +900,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2424985812256224576}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1022,7 +1022,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3694346079886049077}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Leg.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1053,7 +1053,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1440380567198971197}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hip.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}

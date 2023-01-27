@@ -132,6 +132,9 @@ public class GameManager : MonoBehaviour
                 ClearPlayerPowerUps();
                 gameWon = true;
                 playerWinParticleSystem = Instantiate(playerWinParticleSystemPrefab, winner.transform);
+                var sm = FindObjectOfType<SoundManager>();
+                sm.ToggleGameSoundtrack(false);
+                sm.ToggleLobbySoundtrack(true);
                 newLevel = SceneManager.sceneCountInBuildSettings - 1;
             }
         }
@@ -139,6 +142,10 @@ public class GameManager : MonoBehaviour
         if (gameStartTransition)
         {
             SetCrownHolder(out _);
+            
+            var sm = FindObjectOfType<SoundManager>();
+            sm.ToggleGameSoundtrack(true);
+            sm.ToggleLobbySoundtrack(false);
 
             if (playerWinParticleSystem)
                 Destroy(playerWinParticleSystem);

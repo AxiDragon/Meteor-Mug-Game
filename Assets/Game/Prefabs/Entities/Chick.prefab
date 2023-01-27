@@ -756,8 +756,8 @@ MonoBehaviour:
         TimeScale: 0.2
         TimeScaleDuration: 0.5
         ResetTimescaleOnStop: 0
-        TimeScaleLerp: 0
-        TimescaleLerpMode: 0
+        TimeScaleLerp: 1
+        TimescaleLerpMode: 1
         TimeScaleLerpSpeed: 1
         TimescaleLerpCurve:
           MMTweenDefinitionType: 1
@@ -768,15 +768,24 @@ MonoBehaviour:
             - serializedVersion: 3
               time: 0
               value: 0
-              inSlope: 0
-              outSlope: 0
+              inSlope: 2.745267
+              outSlope: 2.745267
               tangentMode: 0
               weightedMode: 0
               inWeight: 0
-              outWeight: 0
+              outWeight: 0.045833334
+            - serializedVersion: 3
+              time: 0.2791748
+              value: 1
+              inSlope: 0.077615455
+              outSlope: 0.077615455
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0.761201
+              outWeight: 0.33333334
             - serializedVersion: 3
               time: 1
-              value: 1
+              value: 0
               inSlope: 0
               outSlope: 0
               tangentMode: 0
@@ -787,7 +796,7 @@ MonoBehaviour:
             m_PostInfinity: 2
             m_RotationOrder: 4
           Initialized: 0
-        TimescaleLerpDuration: 1
+        TimescaleLerpDuration: 0.5
         TimeScaleLerpOnReset: 0
         TimescaleLerpCurveOnReset:
           MMTweenDefinitionType: 1
@@ -798,15 +807,24 @@ MonoBehaviour:
             - serializedVersion: 3
               time: 0
               value: 0
-              inSlope: 0
-              outSlope: 0
+              inSlope: 2.745267
+              outSlope: 2.745267
               tangentMode: 0
               weightedMode: 0
               inWeight: 0
-              outWeight: 0
+              outWeight: 0.045833334
+            - serializedVersion: 3
+              time: 0.2791748
+              value: 1
+              inSlope: 0.077615455
+              outSlope: 0.077615455
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0.761201
+              outWeight: 0.33333334
             - serializedVersion: 3
               time: 1
-              value: 1
+              value: 0
               inSlope: 0
               outSlope: 0
               tangentMode: 0
@@ -817,7 +835,7 @@ MonoBehaviour:
             m_PostInfinity: 2
             m_RotationOrder: 4
           Initialized: 0
-        TimescaleLerpDurationOnReset: 1
+        TimescaleLerpDurationOnReset: 0.5
     - rid: 4216180013144997891
       type: {class: MMF_ScaleShake, ns: MoreMountains.Feedbacks, asm: MoreMountains.Feedbacks}
       data:
@@ -1491,8 +1509,8 @@ MonoBehaviour:
         TimeScale: 0.3
         TimeScaleDuration: 0.3
         ResetTimescaleOnStop: 0
-        TimeScaleLerp: 0
-        TimescaleLerpMode: 0
+        TimeScaleLerp: 1
+        TimescaleLerpMode: 1
         TimeScaleLerpSpeed: 1
         TimescaleLerpCurve:
           MMTweenDefinitionType: 1
@@ -1503,6 +1521,15 @@ MonoBehaviour:
             - serializedVersion: 3
               time: 0
               value: 0
+              inSlope: 2.745267
+              outSlope: 2.745267
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0.045833334
+            - serializedVersion: 3
+              time: 0.2791748
+              value: 1
               inSlope: 0
               outSlope: 0
               tangentMode: 0
@@ -1511,7 +1538,7 @@ MonoBehaviour:
               outWeight: 0
             - serializedVersion: 3
               time: 1
-              value: 1
+              value: 0
               inSlope: 0
               outSlope: 0
               tangentMode: 0
@@ -1522,7 +1549,7 @@ MonoBehaviour:
             m_PostInfinity: 2
             m_RotationOrder: 4
           Initialized: 0
-        TimescaleLerpDuration: 1
+        TimescaleLerpDuration: 0.3
         TimeScaleLerpOnReset: 0
         TimescaleLerpCurveOnReset:
           MMTweenDefinitionType: 1
@@ -1533,15 +1560,24 @@ MonoBehaviour:
             - serializedVersion: 3
               time: 0
               value: 0
-              inSlope: 0
-              outSlope: 0
+              inSlope: 2.745267
+              outSlope: 2.745267
               tangentMode: 0
               weightedMode: 0
               inWeight: 0
-              outWeight: 0
+              outWeight: 0.045833334
+            - serializedVersion: 3
+              time: 0.2791748
+              value: 1
+              inSlope: 0.077615455
+              outSlope: 0.077615455
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0.761201
+              outWeight: 0.33333334
             - serializedVersion: 3
               time: 1
-              value: 1
+              value: 0
               inSlope: 0
               outSlope: 0
               tangentMode: 0
@@ -1552,7 +1588,7 @@ MonoBehaviour:
             m_PostInfinity: 2
             m_RotationOrder: 4
           Initialized: 0
-        TimescaleLerpDurationOnReset: 1
+        TimescaleLerpDurationOnReset: 0.3
     - rid: 4216180078121582595
       type: {class: MMF_Sound, ns: MoreMountains.Feedbacks, asm: MoreMountains.Feedbacks.MMTools}
       data:
@@ -2962,6 +2998,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Chick Base
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0b51f4aee73f7b143ab0c1537a8fee7b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b51f4aee73f7b143ab0c1537a8fee7b, type: 3}
